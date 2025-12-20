@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sarabanda Buzzer</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: #0a0a12; 
+            color: white; 
+            font-family: 'Segoe UI', sans-serif; 
+            min-height: 100vh; 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 12px; 
+            border: 2px solid #333; 
+            font-size: 1.1rem; 
+            background: #1a1a2e;
+            color: white;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+        input::placeholder { color: #666; }
+        
+        .btn { 
+            padding: 18px 40px; 
+            border-radius: 50px; 
+            border: none; 
+            font-weight: bold; 
+            font-size: 1.3rem; 
+            cursor: pointer; 
+            background: linear-gradient(135deg, #ffd700, #ff9500); 
+            color: black; 
+            margin-top: 20px; 
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Schermata Login */
+        #login-screen { 
+            padding: 20px; 
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .login-header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .login-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #ffd700, #ff2d95);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        .login-header p {
+            color: #888;
+        }
+        
+        .form-section {
+            margin-bottom: 25px;
+        }
+        .form-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Selezione GIF */
+        .selection-title {
+            color: #00f5ff;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .selection-title span {
+            font-size: 1.5rem;
+        }
+        
+        .gif-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #1a1a2e;
+            border-radius: 15px;
+            border: 2px solid #333;
+        }
+        .gif-grid::-webkit-scrollbar { width: 8px; }
+        .gif-grid::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 10px; }
+        .gif-grid::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+        
+        .gif-option {
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            background: #252540;
+        }
+        .gif-option img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .gif-option:hover:not(.taken) {
+            border-color: #555;
+            transform: scale(1.05);
+        }
+        .gif-option.selected {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        .gif-option.selected::after {
+            content: '✔';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ffd700;
+            color: black;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        /* GIF già presa da altra squadra */
+        .gif-option.taken {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .gif-option.taken::before {
+            content: '🚫';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            z-index: 2;
+        }
+        
+        /* Selezione Suoni */
+        .sound-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #1a1a2e;
+            border-radius: 15px;
+            border: 2px solid #333;
+        }
+        
+        .sound-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.03);
+        }
+        .sound-option:hover:not(.taken) {
+            background: rgba(255,255,255,0.08);
+            border-color: #444;
+        }
+        .sound-option.selected {
+            border-color: #ff2d95;
+            background: rgba(255, 45, 149, 0.15);
+        }
+        .sound-option .sound-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff2d95, #aa0055);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .sound-option.selected .sound-icon {
+            animation: pulse-sound 1s infinite;
+        }
+        @keyframes pulse-sound {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .sound-option .sound-name {
+            flex-grow: 1;
+            font-size: 0.95rem;
+            color: #ddd;
+        }
+        .sound-option .play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: #333;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+        .sound-option .play-btn:hover {
+            background: #555;
+        }
+        
+        /* Suono già preso da altra squadra */
+        .sound-option.taken {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .sound-option.taken .sound-name::after {
+            content: ' (già scelto)';
+            color: #ff4444;
+            font-size: 0.8rem;
+        }
+        
+        .loading-text {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        
+        .form-actions {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        /* Schermata Pulsantone */
+        #game-screen { 
+            display: none; 
+            height: 100vh; 
+            flex-direction: column; 
+        }
+        .status-text { 
+            padding: 20px; 
+            font-size: 1.2rem; 
+            color: #888; 
+            text-align: center;
+        }
+        
+        #buzzer {
+            flex-grow: 1; 
+            margin: 20px; 
+            border-radius: 20px; 
+            border: none;
+            background: #333; 
+            color: #555; 
+            font-size: 3rem; 
+            font-weight: bold;
+            box-shadow: 0 10px 0 #111; 
+            transition: all 0.1s;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            text-transform: uppercase; 
+            user-select: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Pulsante attivo */
+        #buzzer.active {
+            background: radial-gradient(circle, #ff2d95, #aa0055);
+            color: white; 
+            cursor: pointer;
+            animation: pulse 1s infinite;
+        }
+        #buzzer.active:active { 
+            transform: translateY(10px); 
+            box-shadow: 0 0 0 #111; 
+        }
+
+        @keyframes pulse { 
+            0% { box-shadow: 0 0 0 0 rgba(255, 45, 149, 0.7); } 
+            70% { box-shadow: 0 0 0 20px rgba(255, 45, 149, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(255, 45, 149, 0); } 
+        }
+
+        /* Messaggio "Hai prenotato" */
+        #overlay-msg {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.9); 
+            z-index: 10; 
+            display: none;
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+        }
+        .buzzed-gif { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 5px solid #ffd700; 
+            margin-bottom: 20px;
+        }
+        #overlay-msg h1 {
+            font-size: 1.8rem;
+            text-align: center;
+            padding: 0 20px;
+        }
+        
+        /* Toast notifiche */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #ff4444;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            text-align: center;
+            max-width: 90%;
+        }
+        .toast.active {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-header">
+            <h1>🎵 SARABANDA</h1>
+            <p>Crea la tua squadra</p>
+        </div>
+        
+        <div class="form-section">
+            <label>Nome Squadra</label>
+            <input type="text" id="team-name" placeholder="Caricamento suggerimenti...">
+        </div>
+        
+        <div class="form-section">
+            <label>Nomi Partecipanti</label>
+            <input type="text" id="members" placeholder="Caricamento suggerimenti...">
+        </div>
+        
+        <div class="form-section">
+            <div class="selection-title"><span>🖼️</span> Scegli la tua GIF</div>
+            <div class="gif-grid" id="gif-grid">
+                <div class="loading-text">Caricamento GIF...</div>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <div class="selection-title"><span>🔊</span> Scegli il tuo suono</div>
+            <div class="sound-grid" id="sound-grid">
+                <div class="loading-text">Caricamento suoni...</div>
+            </div>
+        </div>
+        
+        <div class="form-actions">
+            <button class="btn" id="btn-register" onclick="register()">🎮 ENTRA IN GIOCO</button>
+        </div>
+    </div>
+
+    <div id="game-screen">
+        <div class="status-text" id="status">Attendi la musica...</div>
+        <div id="buzzer">BLOCCATO</div>
+    </div>
+
+    <div id="overlay-msg">
+        <img src="" id="my-gif" class="buzzed-gif">
+        <h1 id="msg-text">HAI PRENOTATO!</h1>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const socket = io();
+        let myTeam = null;
+        let selectedGif = null;
+        let selectedSound = null;
+        let previewAudio = null;
+        let allGifs = [];
+        let allSounds = [];
+        let usedGifs = new Set();
+        let usedSounds = new Set();
+        let isRegistering = false;
+        
+        const buzzer = document.getElementById('buzzer');
+        const gifGrid = document.getElementById('gif-grid');
+        const soundGrid = document.getElementById('sound-grid');
+        const toast = document.getElementById('toast');
+
+        // Mostra toast di errore
+        function showToast(message, duration = 3000) {
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), duration);
+        }
+
+        // Carica suggerimenti dal server
+        async function loadHints() {
+            try {
+                const response = await fetch('/api/hints');
+                const hints = await response.json();
+                
+                const teamInput = document.getElementById('team-name');
+                const membersInput = document.getElementById('members');
+                
+                if (hints.teamSuggestions && hints.teamSuggestions.length > 0) {
+                    teamInput.placeholder = `Es: ${hints.teamSuggestions.join(', ')}`;
+                } else {
+                    teamInput.placeholder = 'Es: I Campioni';
+                }
+                
+                if (hints.memberSuggestions && hints.memberSuggestions.length > 0) {
+                    membersInput.placeholder = `Es: ${hints.memberSuggestions.join(', ')}`;
+                } else {
+                    membersInput.placeholder = 'Es: Mario, Luigi, Peach';
+                }
+            } catch (e) {
+                // Fallback a placeholder statici
+                document.getElementById('team-name').placeholder = 'Es: I Campioni';
+                document.getElementById('members').placeholder = 'Es: Mario, Luigi, Peach';
+            }
+        }
+
+        // Carica le GIF disponibili
+        async function loadGifs() {
+            try {
+                const response = await fetch('/api/gifs');
+                allGifs = await response.json();
+                renderGifs();
+            } catch (e) {
+                gifGrid.innerHTML = '<div class="loading-text">Errore nel caricamento delle GIF</div>';
+            }
+        }
+
+        // Renderizza le GIF con stato taken
+        function renderGifs() {
+            if (allGifs.length === 0) {
+                gifGrid.innerHTML = '<div class="loading-text">Nessuna GIF disponibile</div>';
+                return;
+            }
+            
+            gifGrid.innerHTML = allGifs.map(gif => {
+                const isTaken = usedGifs.has(gif);
+                const isSelected = selectedGif === gif;
+                return `
+                    <div class="gif-option ${isTaken ? 'taken' : ''} ${isSelected && !isTaken ? 'selected' : ''}" 
+                         data-gif="${gif}" 
+                         onclick="selectGif(this, '${gif}')">
+                        <img src="/GIF/${gif}" alt="${gif}">
+                    </div>
+                `;
+            }).join('');
+            
+            // Se la GIF selezionata è stata presa, deseleziona
+            if (selectedGif && usedGifs.has(selectedGif)) {
+                selectedGif = null;
+                // Seleziona la prima disponibile
+                const firstAvailable = allGifs.find(g => !usedGifs.has(g));
+                if (firstAvailable) {
+                    const el = gifGrid.querySelector(`[data-gif="${firstAvailable}"]`);
+                    if (el) selectGif(el, firstAvailable);
+                }
+            }
+            
+            // Se nessuna selezionata, seleziona la prima disponibile
+            if (!selectedGif) {
+                const firstAvailable = allGifs.find(g => !usedGifs.has(g));
+                if (firstAvailable) {
+                    const el = gifGrid.querySelector(`[data-gif="${firstAvailable}"]`);
+                    if (el) selectGif(el, firstAvailable);
+                }
+            }
+        }
+
+        // Carica i suoni disponibili
+        async function loadSounds() {
+            try {
+                const response = await fetch('/api/sounds');
+                allSounds = await response.json();
+                renderSounds();
+            } catch (e) {
+                soundGrid.innerHTML = '<div class="loading-text">Errore nel caricamento dei suoni</div>';
+            }
+        }
+
+        // Renderizza i suoni con stato taken
+        function renderSounds() {
+            if (allSounds.length === 0) {
+                soundGrid.innerHTML = '<div class="loading-text">Nessun suono disponibile</div>';
+                return;
+            }
+            
+            soundGrid.innerHTML = allSounds.map(sound => {
+                const displayName = sound.replace(/\.[^/.]+$/, '').replace(/_/g, ' ');
+                const isTaken = usedSounds.has(sound);
+                const isSelected = selectedSound === sound;
+                return `
+                    <div class="sound-option ${isTaken ? 'taken' : ''} ${isSelected && !isTaken ? 'selected' : ''}" 
+                         data-sound="${sound}" 
+                         onclick="selectSound(this, '${sound}')">
+                        <div class="sound-icon">🎵</div>
+                        <div class="sound-name">${displayName}</div>
+                        <button class="play-btn" onclick="event.stopPropagation(); previewSound('${sound}')">▶</button>
+                    </div>
+                `;
+            }).join('');
+            
+            // Se il suono selezionato è stato preso, deseleziona
+            if (selectedSound && usedSounds.has(selectedSound)) {
+                selectedSound = null;
+                // Seleziona il primo disponibile
+                const firstAvailable = allSounds.find(s => !usedSounds.has(s));
+                if (firstAvailable) {
+                    const el = soundGrid.querySelector(`[data-sound="${firstAvailable}"]`);
+                    if (el) selectSound(el, firstAvailable);
+                }
+            }
+            
+            // Se nessuno selezionato, seleziona il primo disponibile
+            if (!selectedSound) {
+                const firstAvailable = allSounds.find(s => !usedSounds.has(s));
+                if (firstAvailable) {
+                    const el = soundGrid.querySelector(`[data-sound="${firstAvailable}"]`);
+                    if (el) selectSound(el, firstAvailable);
+                }
+            }
+        }
+
+        function selectGif(element, gif) {
+            if (usedGifs.has(gif)) {
+                showToast('Questa GIF è già stata scelta!');
+                return;
+            }
+            document.querySelectorAll('.gif-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedGif = gif;
+        }
+
+        function selectSound(element, sound) {
+            if (usedSounds.has(sound)) {
+                showToast('Questo suono è già stato scelto!');
+                return;
+            }
+            document.querySelectorAll('.sound-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedSound = sound;
+        }
+
+        function previewSound(sound) {
+            if (previewAudio) {
+                previewAudio.pause();
+                previewAudio = null;
+            }
+            previewAudio = new Audio('/Sounds/' + sound);
+            previewAudio.play();
+        }
+
+        function register() {
+            if (isRegistering) return;
+            
+            const name = document.getElementById('team-name').value.trim();
+            const members = document.getElementById('members').value.trim();
+            
+            if (!name) return alert("Inserisci il nome della squadra!");
+            if (!selectedGif) return alert("Seleziona una GIF!");
+            if (!selectedSound) return alert("Seleziona un suono!");
+            
+            // Verifica lato client che non siano già presi
+            if (usedGifs.has(selectedGif)) {
+                showToast('Questa GIF è appena stata presa! Scegline un\'altra.');
+                renderGifs();
+                return;
+            }
+            if (usedSounds.has(selectedSound)) {
+                showToast('Questo suono è appena stato preso! Scegline un altro.');
+                renderSounds();
+                return;
+            }
+
+            isRegistering = true;
+            myTeam = { name, members, gif: selectedGif, sound: selectedSound };
+            socket.emit('register_team', myTeam);
+        }
+
+        // Gestione risposta registrazione dal server
+        socket.on('registration_success', () => {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            isRegistering = false;
+        });
+
+        socket.on('registration_error', (data) => {
+            isRegistering = false;
+            showToast(data.message, 4000);
+            // Ricarica le liste per avere lo stato aggiornato
+            loadGifs();
+            loadSounds();
+        });
+
+        // Aggiornamento risorse usate (ricevuto dal server)
+        socket.on('used_resources', (data) => {
+            usedGifs = new Set(data.gifs);
+            usedSounds = new Set(data.sounds);
+            
+            // Aggiorna la UI se siamo ancora nella schermata di login
+            if (document.getElementById('login-screen').style.display !== 'none') {
+                renderGifs();
+                renderSounds();
+            }
+        });
+
+        // Click sul pulsantone
+        buzzer.addEventListener('touchstart', handleBuzz);
+        buzzer.addEventListener('click', handleBuzz);
+
+        function handleBuzz(e) {
+            e.preventDefault(); // Evita doppio click su mobile
+            if (buzzer.classList.contains('active')) {
+                socket.emit('buzz');
+            }
+        }
+
+        // Gestione stato pulsante dal server
+        socket.on('buzzer_status', (status) => {
+            if (status === 'active') {
+                buzzer.classList.add('active');
+                buzzer.innerText = "PRENOTA!";
+                document.getElementById('status').innerText = "MUSICA IN CORSO!";
+            } else {
+                buzzer.classList.remove('active');
+                buzzer.innerText = "BLOCCATO";
+                document.getElementById('status').innerText = "Attendi la musica...";
+            }
+        });
+
+        // Qualcuno ha prenotato
+        socket.on('team_buzzed', (team) => {
+            const overlay = document.getElementById('overlay-msg');
+            const msg = document.getElementById('msg-text');
+            const gif = document.getElementById('my-gif');
+            
+            overlay.style.display = 'flex';
+            
+            if (team.id === socket.id) {
+                overlay.style.backgroundColor = "rgba(40, 167, 69, 0.9)"; // Verde
+                msg.innerText = "HAI PRENOTATO TU!";
+                gif.src = "/GIF/" + myTeam.gif;
+            } else {
+                overlay.style.backgroundColor = "rgba(200, 0, 0, 0.9)"; // Rosso
+                msg.innerText = "PRENOTATO: " + team.name;
+                gif.src = "/GIF/" + team.gif;
+            }
+        });
+
+        // Reset per nuovo round
+        socket.on('reset_round', () => {
+            document.getElementById('overlay-msg').style.display = 'none';
+        });
+
+        // Reset completo del gioco (torna alla schermata di login)
+        socket.on('game_reset', () => {
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'block';
+            document.getElementById('overlay-msg').style.display = 'none';
+            myTeam = null;
+            selectedGif = null;
+            selectedSound = null;
+            isRegistering = false;
+            
+            // Ricarica tutto
+            loadHints();
+            loadGifs();
+            loadSounds();
+        });
+
+        // Carica tutto all'avvio
+        loadHints();
+        loadGifs();
+        loadSounds();
+    </script>
+</body>
+</html>

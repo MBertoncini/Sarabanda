@@ -1,0 +1,14 @@
+{
+  "name": "sarabanda-party",
+  "version": "1.0.0",
+  "description": "Sarabanda Server Locale",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.1",
+    "ip": "^1.1.8",
+    "socket.io": "^4.7.4"
+  }
+}
