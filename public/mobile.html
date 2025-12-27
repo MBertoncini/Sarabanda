@@ -77,6 +77,108 @@
             color: #888;
         }
         
+        /* NUOVO: Sezione riconnessione */
+        .rejoin-section {
+            background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(255, 45, 149, 0.1));
+            border: 2px solid #00f5ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: none;
+        }
+        .rejoin-section.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .rejoin-title {
+            color: #00f5ff;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .rejoin-title span {
+            font-size: 1.5rem;
+        }
+        
+        .rejoin-team-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .rejoin-team-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .rejoin-team-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffd700;
+        }
+        .rejoin-team-card:active {
+            transform: scale(0.98);
+        }
+        
+        .rejoin-team-gif {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd700;
+        }
+        
+        .rejoin-team-info {
+            flex-grow: 1;
+        }
+        .rejoin-team-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #ffd700;
+        }
+        .rejoin-team-members {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .rejoin-team-score {
+            font-size: 0.9rem;
+            color: #39ff14;
+        }
+        
+        .rejoin-arrow {
+            font-size: 1.5rem;
+            color: #ffd700;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #555;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #333;
+        }
+        .divider span {
+            padding: 0 15px;
+            font-size: 0.9rem;
+        }
+        
         .form-section {
             margin-bottom: 25px;
         }
@@ -273,6 +375,36 @@
             height: 100vh; 
             flex-direction: column; 
         }
+        
+        .game-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .my-team-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .my-team-gif {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ffd700;
+        }
+        .my-team-name {
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .my-team-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #39ff14;
+        }
+        
         .status-text { 
             padding: 20px; 
             font-size: 1.2rem; 
@@ -364,6 +496,10 @@
         .toast.active {
             transform: translateX(-50%) translateY(0);
         }
+        .toast.success {
+            background: #39ff14;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -372,6 +508,18 @@
         <div class="login-header">
             <h1>🎵 SARABANDA</h1>
             <p>Crea la tua squadra</p>
+        </div>
+        
+        <!-- NUOVO: Sezione riconnessione -->
+        <div class="rejoin-section" id="rejoin-section">
+            <div class="rejoin-title"><span>🔄</span> Riconnettiti alla tua squadra</div>
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">
+                Una partita è in corso! Seleziona la tua squadra per rientrare:
+            </p>
+            <div class="rejoin-team-list" id="rejoin-team-list">
+                <!-- Le squadre disconnesse appariranno qui -->
+            </div>
+            <div class="divider"><span>oppure crea una nuova squadra</span></div>
         </div>
         
         <div class="form-section">
@@ -404,6 +552,13 @@
     </div>
 
     <div id="game-screen">
+        <div class="game-header">
+            <div class="my-team-info">
+                <img src="" id="my-team-gif" class="my-team-gif">
+                <span class="my-team-name" id="my-team-name">Squadra</span>
+            </div>
+            <div class="my-team-score" id="my-team-score">0</div>
+        </div>
         <div class="status-text" id="status">Attendi la musica...</div>
         <div id="buzzer">BLOCCATO</div>
     </div>
@@ -418,6 +573,7 @@
     <script>
         const socket = io();
         let myTeam = null;
+        let sessionToken = null; // NUOVO: Token per riconnessione
         let selectedGif = null;
         let selectedSound = null;
         let previewAudio = null;
@@ -426,17 +582,85 @@
         let usedGifs = new Set();
         let usedSounds = new Set();
         let isRegistering = false;
+        let disconnectedTeams = []; // NUOVO: Lista squadre disconnesse
         
         const buzzer = document.getElementById('buzzer');
         const gifGrid = document.getElementById('gif-grid');
         const soundGrid = document.getElementById('sound-grid');
         const toast = document.getElementById('toast');
+        const rejoinSection = document.getElementById('rejoin-section');
+        const rejoinTeamList = document.getElementById('rejoin-team-list');
 
-        // Mostra toast di errore
-        function showToast(message, duration = 3000) {
+        // NUOVO: Carica token salvato
+        function loadSavedToken() {
+            try {
+                sessionToken = localStorage.getItem('sarabanda_token');
+                const savedTeamName = localStorage.getItem('sarabanda_team');
+                return { token: sessionToken, teamName: savedTeamName };
+            } catch (e) {
+                return { token: null, teamName: null };
+            }
+        }
+
+        // NUOVO: Salva token
+        function saveToken(token, teamName) {
+            try {
+                localStorage.setItem('sarabanda_token', token);
+                localStorage.setItem('sarabanda_team', teamName);
+                sessionToken = token;
+            } catch (e) {
+                console.log('Impossibile salvare token');
+            }
+        }
+
+        // NUOVO: Cancella token
+        function clearToken() {
+            try {
+                localStorage.removeItem('sarabanda_token');
+                localStorage.removeItem('sarabanda_team');
+                sessionToken = null;
+            } catch (e) {
+                console.log('Impossibile cancellare token');
+            }
+        }
+
+        // Mostra toast
+        function showToast(message, type = 'error', duration = 3000) {
             toast.textContent = message;
+            toast.className = 'toast';
+            if (type === 'success') toast.classList.add('success');
             toast.classList.add('active');
             setTimeout(() => toast.classList.remove('active'), duration);
+        }
+
+        // NUOVO: Renderizza squadre disconnesse per riconnessione
+        function renderDisconnectedTeams() {
+            if (disconnectedTeams.length === 0) {
+                rejoinSection.classList.remove('active');
+                return;
+            }
+            
+            rejoinSection.classList.add('active');
+            rejoinTeamList.innerHTML = disconnectedTeams.map(team => `
+                <div class="rejoin-team-card" onclick="rejoinTeam('${team.name}')">
+                    <img src="/GIF/${team.gif}" class="rejoin-team-gif" alt="${team.name}">
+                    <div class="rejoin-team-info">
+                        <div class="rejoin-team-name">${team.name}</div>
+                        <div class="rejoin-team-members">${team.members || 'Nessun membro'}</div>
+                        <div class="rejoin-team-score">Punti: ${team.score}</div>
+                    </div>
+                    <div class="rejoin-arrow">→</div>
+                </div>
+            `).join('');
+        }
+
+        // NUOVO: Riconnettiti a una squadra
+        function rejoinTeam(teamName) {
+            const saved = loadSavedToken();
+            socket.emit('rejoin_team', {
+                teamName: teamName,
+                sessionToken: saved.token
+            });
         }
 
         // Carica suggerimenti dal server
@@ -460,7 +684,6 @@
                     membersInput.placeholder = 'Es: Mario, Luigi, Peach';
                 }
             } catch (e) {
-                // Fallback a placeholder statici
                 document.getElementById('team-name').placeholder = 'Es: I Campioni';
                 document.getElementById('members').placeholder = 'Es: Mario, Luigi, Peach';
             }
@@ -499,7 +722,6 @@
             // Se la GIF selezionata è stata presa, deseleziona
             if (selectedGif && usedGifs.has(selectedGif)) {
                 selectedGif = null;
-                // Seleziona la prima disponibile
                 const firstAvailable = allGifs.find(g => !usedGifs.has(g));
                 if (firstAvailable) {
                     const el = gifGrid.querySelector(`[data-gif="${firstAvailable}"]`);
@@ -553,7 +775,6 @@
             // Se il suono selezionato è stato preso, deseleziona
             if (selectedSound && usedSounds.has(selectedSound)) {
                 selectedSound = null;
-                // Seleziona il primo disponibile
                 const firstAvailable = allSounds.find(s => !usedSounds.has(s));
                 if (firstAvailable) {
                     const el = soundGrid.querySelector(`[data-sound="${firstAvailable}"]`);
@@ -610,7 +831,6 @@
             if (!selectedGif) return alert("Seleziona una GIF!");
             if (!selectedSound) return alert("Seleziona un suono!");
             
-            // Verifica lato client che non siano già presi
             if (usedGifs.has(selectedGif)) {
                 showToast('Questa GIF è appena stata presa! Scegline un\'altra.');
                 renderGifs();
@@ -627,30 +847,92 @@
             socket.emit('register_team', myTeam);
         }
 
-        // Gestione risposta registrazione dal server
-        socket.on('registration_success', () => {
+        // Entra nella schermata di gioco
+        function enterGameScreen() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
+            
+            // Aggiorna header con info squadra
+            document.getElementById('my-team-gif').src = '/GIF/' + myTeam.gif;
+            document.getElementById('my-team-name').textContent = myTeam.name;
+            document.getElementById('my-team-score').textContent = myTeam.score || 0;
+        }
+
+        // Gestione risposta registrazione dal server
+        socket.on('registration_success', (data) => {
+            // NUOVO: Salva il token (gestisce anche il caso legacy senza token)
+            const token = data && data.sessionToken ? data.sessionToken : null;
+            if (token) {
+                saveToken(token, myTeam.name);
+            }
+            myTeam.score = 0;
+            enterGameScreen();
             isRegistering = false;
         });
 
         socket.on('registration_error', (data) => {
             isRegistering = false;
-            showToast(data.message, 4000);
-            // Ricarica le liste per avere lo stato aggiornato
+            showToast(data.message, 'error', 4000);
             loadGifs();
             loadSounds();
         });
 
-        // Aggiornamento risorse usate (ricevuto dal server)
+        // NUOVO: Gestione riconnessione riuscita
+        socket.on('rejoin_success', (data) => {
+            saveToken(data.sessionToken, data.name);
+            myTeam = {
+                name: data.name,
+                members: data.members,
+                gif: data.gif,
+                sound: data.sound,
+                score: data.score
+            };
+            showToast('Riconnesso con successo!', 'success');
+            enterGameScreen();
+        });
+
+        // NUOVO: Errore riconnessione
+        socket.on('rejoin_error', (data) => {
+            showToast(data.message, 'error', 4000);
+        });
+
+        // NUOVO: Stato sessione (squadre disconnesse)
+        socket.on('session_status', (data) => {
+            disconnectedTeams = data.disconnectedTeams || [];
+            renderDisconnectedTeams();
+            
+            // Se c'è una sessione attiva e abbiamo un token salvato, prova a riconnettersi automaticamente
+            if (data.active && !myTeam) {
+                const saved = loadSavedToken();
+                if (saved.teamName) {
+                    const myDisconnectedTeam = disconnectedTeams.find(t => t.name === saved.teamName);
+                    if (myDisconnectedTeam) {
+                        // Riconnessione automatica
+                        setTimeout(() => rejoinTeam(saved.teamName), 500);
+                    }
+                }
+            }
+        });
+
+        // Aggiornamento risorse usate
         socket.on('used_resources', (data) => {
             usedGifs = new Set(data.gifs);
             usedSounds = new Set(data.sounds);
             
-            // Aggiorna la UI se siamo ancora nella schermata di login
             if (document.getElementById('login-screen').style.display !== 'none') {
                 renderGifs();
                 renderSounds();
+            }
+        });
+
+        // Aggiornamento squadre (per punteggio)
+        socket.on('update_teams', (teams) => {
+            if (myTeam) {
+                const me = teams.find(t => t.name === myTeam.name);
+                if (me) {
+                    myTeam.score = me.score;
+                    document.getElementById('my-team-score').textContent = me.score;
+                }
             }
         });
 
@@ -659,7 +941,7 @@
         buzzer.addEventListener('click', handleBuzz);
 
         function handleBuzz(e) {
-            e.preventDefault(); // Evita doppio click su mobile
+            e.preventDefault();
             if (buzzer.classList.contains('active')) {
                 socket.emit('buzz');
             }
@@ -686,12 +968,12 @@
             
             overlay.style.display = 'flex';
             
-            if (team.id === socket.id) {
-                overlay.style.backgroundColor = "rgba(40, 167, 69, 0.9)"; // Verde
+            if (myTeam && team.name === myTeam.name) {
+                overlay.style.backgroundColor = "rgba(40, 167, 69, 0.9)";
                 msg.innerText = "HAI PRENOTATO TU!";
                 gif.src = "/GIF/" + myTeam.gif;
             } else {
-                overlay.style.backgroundColor = "rgba(200, 0, 0, 0.9)"; // Rosso
+                overlay.style.backgroundColor = "rgba(200, 0, 0, 0.9)";
                 msg.innerText = "PRENOTATO: " + team.name;
                 gif.src = "/GIF/" + team.gif;
             }
@@ -702,7 +984,7 @@
             document.getElementById('overlay-msg').style.display = 'none';
         });
 
-        // Reset completo del gioco (torna alla schermata di login)
+        // Reset completo del gioco
         socket.on('game_reset', () => {
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('login-screen').style.display = 'block';
@@ -711,8 +993,12 @@
             selectedGif = null;
             selectedSound = null;
             isRegistering = false;
+            disconnectedTeams = [];
             
-            // Ricarica tutto
+            // NUOVO: Cancella token salvato
+            clearToken();
+            
+            renderDisconnectedTeams();
             loadHints();
             loadGifs();
             loadSounds();

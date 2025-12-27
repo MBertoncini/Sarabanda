@@ -101,8 +101,32 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.1);
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        /* NUOVO: Indicatore stato connessione */
+        .team-card.disconnected {
+            opacity: 0.5;
+            border-color: #ff4444;
+        }
+        .team-card .connection-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-green);
+        }
+        .team-card.disconnected .connection-status {
+            background: #ff4444;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
         
         .team-gif-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-gold); margin-bottom: 10px; }
         .team-name { font-weight: bold; font-size: 1.2rem; color: var(--accent-cyan); margin-bottom: 5px; }
@@ -112,11 +136,16 @@
         .btn { padding: 15px 40px; border: none; border-radius: 50px; font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; }
         .btn-primary { background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange)); color: #000; box-shadow: 0 5px 30px rgba(255, 215, 0, 0.4); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+        .btn-danger { background: linear-gradient(135deg, #ff4444, #aa0000); color: #fff; box-shadow: 0 5px 20px rgba(255, 68, 68, 0.3); }
+        .btn-danger:hover { transform: scale(1.05); }
         
-        .setup-actions { text-align: center; margin-top: 30px; }
+        .setup-actions { text-align: center; margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
 
         /* GIOCO */
         .game-layout { display: grid; grid-template-columns: 1fr 300px; gap: 30px; }
+        @media (max-width: 900px) {
+            .game-layout { grid-template-columns: 1fr; }
+        }
         .visualizer-container { background: var(--bg-card); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; }
         #visualizer { width: 100%; height: 200px; display: block; border-radius: 10px; }
         
@@ -134,6 +163,7 @@
         /* CLASSIFICA */
         .scoreboard { background: var(--bg-card); border-radius: 20px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.1); }
         .team-score { display: flex; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .team-score.disconnected { opacity: 0.5; border: 1px dashed #ff4444; }
         .team-score-points { font-family: 'Bangers', cursive; font-size: 1.5rem; color: var(--accent-gold); }
 
         /* TITOLO RIVELATO - FISSO IN ALTO */
@@ -190,6 +220,53 @@
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); padding: 15px 30px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); z-index: 200; transition: transform 0.3s ease; }
         .toast.active { transform: translateX(-50%) translateY(0); }
 
+        /* NUOVO: Info sessione */
+        .session-info {
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid var(--accent-green);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .session-info .session-badge {
+            background: var(--accent-green);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .session-info .session-text {
+            color: var(--accent-green);
+        }
+
+        /* NUOVO: Warning squadre disconnesse */
+        .disconnected-warning {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid #ff4444;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .disconnected-warning.active {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .disconnected-warning .warning-icon {
+            font-size: 2rem;
+        }
+        .disconnected-warning .warning-text {
+            color: #ff4444;
+        }
+        .disconnected-warning .warning-text strong {
+            color: #fff;
+        }
+
     </style>
 </head>
 <body>
@@ -242,6 +319,22 @@
         </div>
 
         <div id="game-screen" class="screen">
+            <!-- NUOVO: Info sessione attiva -->
+            <div class="session-info" id="session-info">
+                <div class="session-text">
+                    <strong>Sessione attiva</strong> - Le squadre possono riconnettersi
+                </div>
+                <div class="session-badge" id="session-id">ID: ---</div>
+            </div>
+            
+            <!-- NUOVO: Warning squadre disconnesse -->
+            <div class="disconnected-warning" id="disconnected-warning">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-text">
+                    <strong id="disconnected-count">0</strong> squadra/e disconnessa/e - possono rientrare dal telefono
+                </div>
+            </div>
+            
             <div class="game-layout">
                 <div class="main-area">
                     <div class="visualizer-container">
@@ -259,6 +352,13 @@
                     <div style="text-align:center; margin-top:20px; color:var(--text-muted); font-size:0.9rem;">
                         <span style="margin: 0 10px;">SPAZIO: Nuova Canzone</span>
                         <span style="margin: 0 10px;">R: Rivela</span>
+                    </div>
+                    
+                    <!-- NUOVO: Bottone reset in fondo -->
+                    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <button class="btn btn-danger" id="btn-reset-game" onclick="confirmResetGame()">
+                            🔄 TERMINA E RESETTA PARTITA
+                        </button>
                     </div>
                 </div>
 
@@ -295,7 +395,8 @@
         const state = {
             songs: [], playedSongs: [], currentSong: null,
             teams: [], isPlaying: false, bookedTeamId: null,
-            audioCtx: null, analyser: null, source: null, animationId: null
+            audioCtx: null, analyser: null, source: null, animationId: null,
+            sessionId: null // NUOVO
         };
 
         // ELEMENTI DOM
@@ -322,7 +423,11 @@
             btnWrong: document.getElementById('btn-wrong'),
             toast: document.getElementById('toast'),
             revealedBanner: document.getElementById('revealed-banner'),
-            revealedTitleText: document.getElementById('revealed-title-text')
+            revealedTitleText: document.getElementById('revealed-title-text'),
+            sessionInfo: document.getElementById('session-info'),
+            sessionId: document.getElementById('session-id'),
+            disconnectedWarning: document.getElementById('disconnected-warning'),
+            disconnectedCount: document.getElementById('disconnected-count')
         };
 
         // --- GESTIONE SOCKET.IO ---
@@ -333,6 +438,15 @@
             renderTeamsSetup();
             renderScoreboard();
             checkStartConditions();
+            updateDisconnectedWarning();
+        });
+
+        // NUOVO: Stato sessione
+        socket.on('session_status', (data) => {
+            if (data.active) {
+                state.sessionId = data.sessionId;
+                el.sessionId.textContent = 'ID: ' + data.sessionId;
+            }
         });
 
         // 2. Qualcuno ha prenotato!
@@ -360,9 +474,43 @@
 
         function startGame() {
             if (state.songs.length === 0) return alert("Carica almeno una canzone!");
+            
+            // NUOVO: Notifica il server che il gioco è iniziato (attiva la sessione)
+            socket.emit('judge_action', { type: 'start_game' });
+            
             el.setupScreen.classList.remove('active');
             el.gameScreen.classList.add('active');
             initAudio();
+        }
+
+        // NUOVO: Conferma reset partita
+        function confirmResetGame() {
+            if (confirm('Sei sicuro di voler terminare la partita?\n\nTutte le squadre verranno disconnesse e i punteggi azzerati.')) {
+                socket.emit('judge_action', { type: 'reset_game' });
+                
+                // Torna alla schermata setup
+                el.gameScreen.classList.remove('active');
+                el.setupScreen.classList.add('active');
+                
+                // Reset stato locale
+                state.teams = [];
+                state.sessionId = null;
+                stopSong(true);
+                hideRevealedTitle();
+                
+                showToast('Partita terminata');
+            }
+        }
+
+        // NUOVO: Aggiorna warning squadre disconnesse
+        function updateDisconnectedWarning() {
+            const disconnected = state.teams.filter(t => !t.connected);
+            if (disconnected.length > 0) {
+                el.disconnectedWarning.classList.add('active');
+                el.disconnectedCount.textContent = disconnected.length;
+            } else {
+                el.disconnectedWarning.classList.remove('active');
+            }
         }
 
         async function playNewSong() {
@@ -403,7 +551,6 @@
                 state.source.start(0, startTime);
                 
                 state.isPlaying = true;
-                el.btnPlay.textContent = '⏸'; // Icona pausa? O lascia Play per "Next"? Lascio Play per coerenza visiva
                 
                 // SBLOCCA I PULSANTI SUI TELEFONI
                 socket.emit('judge_action', { type: 'unlock_buzzer' });
@@ -411,7 +558,7 @@
                 drawVisualizer();
 
                 state.source.onended = () => {
-                   // Fine naturale della canzone (opzionale gestire loop)
+                   // Fine naturale della canzone
                 };
 
             } catch (e) {
@@ -513,10 +660,12 @@
                 return;
             }
             el.teamsGrid.innerHTML = state.teams.map(t => `
-                <div class="team-card">
+                <div class="team-card ${t.connected === false ? 'disconnected' : ''}">
+                    <div class="connection-status" title="${t.connected === false ? 'Disconnesso' : 'Connesso'}"></div>
                     <img src="/GIF/${t.gif}" class="team-gif-preview">
                     <div class="team-name">${t.name}</div>
                     <div class="team-members">${t.members}</div>
+                    ${t.connected === false ? '<div style="color:#ff4444; font-size:0.8rem; margin-top:5px;">⚠️ Disconnesso</div>' : ''}
                 </div>
             `).join('');
         }
@@ -524,10 +673,11 @@
         function renderScoreboard() {
             const sorted = [...state.teams].sort((a, b) => b.score - a.score);
             el.scoreboardList.innerHTML = sorted.map(t => `
-                <div class="team-score">
+                <div class="team-score ${t.connected === false ? 'disconnected' : ''}">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <img src="/GIF/${t.gif}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
                         <span>${t.name}</span>
+                        ${t.connected === false ? '<span style="color:#ff4444; font-size:0.7rem;">⚠️</span>' : ''}
                     </div>
                     <div class="team-score-points">${t.score}</div>
                 </div>
