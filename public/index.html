@@ -41,7 +41,7 @@
         .container { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 20px; }
 
         /* HEADER */
-        .header { text-align: center; padding: 30px 0; }
+        .header { text-align: center; padding: 30px 0; position: relative; }
         .logo {
             font-family: 'Bangers', cursive;
             font-size: clamp(3rem, 8vw, 6rem);
@@ -52,6 +52,187 @@
             animation: glow 2s ease-in-out infinite alternate;
         }
         .subtitle { font-size: 1.2rem; color: var(--text-muted); margin-top: 10px; letter-spacing: 0.3em; text-transform: uppercase; }
+
+        /* TASTO IMPOSTAZIONI */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .settings-btn:hover {
+            border-color: var(--accent-gold);
+            transform: rotate(30deg);
+        }
+
+        /* MODAL IMPOSTAZIONI */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .settings-modal.active {
+            display: flex;
+        }
+        .settings-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .settings-title {
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            color: var(--accent-gold);
+        }
+        .settings-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .settings-close:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
+
+        /* OPZIONI PUNTEGGIO */
+        .scoring-section {
+            margin-bottom: 30px;
+        }
+        .scoring-section h3 {
+            color: var(--accent-cyan);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .scoring-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .scoring-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .scoring-option.selected {
+            border-color: var(--accent-gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+        .scoring-option-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .scoring-radio {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .scoring-option.selected .scoring-radio {
+            border-color: var(--accent-gold);
+        }
+        .scoring-option.selected .scoring-radio::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+        }
+        .scoring-option-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .scoring-option-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-left: 39px;
+        }
+        .scoring-details {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            margin-left: 39px;
+            flex-wrap: wrap;
+        }
+        .scoring-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .scoring-badge.positive {
+            background: rgba(57, 255, 20, 0.2);
+            color: var(--accent-green);
+        }
+        .scoring-badge.neutral {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+        }
+        .scoring-badge.negative {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        /* INDICATORE SISTEMA ATTIVO */
+        .current-scoring-indicator {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--accent-gold);
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            margin-left: 15px;
+        }
+        .current-scoring-indicator .label {
+            color: var(--text-muted);
+        }
+        .current-scoring-indicator .value {
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
 
         /* SEZIONI E SCHERMATE */
         .screen { display: none; }
@@ -105,7 +286,7 @@
         }
         @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
-        /* NUOVO: Indicatore stato connessione */
+        /* Indicatore stato connessione */
         .team-card.disconnected {
             opacity: 0.5;
             border-color: #ff4444;
@@ -139,20 +320,15 @@
         .btn-danger { background: linear-gradient(135deg, #ff4444, #aa0000); color: #fff; box-shadow: 0 5px 20px rgba(255, 68, 68, 0.3); }
         .btn-danger:hover { transform: scale(1.05); }
         
-        .setup-actions { text-align: center; margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .setup-actions { text-align: center; margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; align-items: center; }
 
         /* GIOCO */
-        .game-layout { display: grid; grid-template-columns: 1fr 300px; gap: 30px; }
+        .game-layout { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
         @media (max-width: 900px) {
             .game-layout { grid-template-columns: 1fr; }
         }
         .visualizer-container { background: var(--bg-card); border-radius: 20px; padding: 30px; border: 1px solid rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; }
         #visualizer { width: 100%; height: 200px; display: block; border-radius: 10px; }
-        
-        .now-playing { text-align: center; margin-top: 20px; min-height: 40px; }
-        .song-title { font-size: 1.5rem; font-weight: 600; color: var(--accent-gold); transition: opacity 0.3s ease; }
-        .song-title.hidden { opacity: 0; }
-        .song-title.revealed { opacity: 1; }
 
         .controls { display: flex; justify-content: center; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
         .btn-play { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-green), #00aa00); border: none; font-size: 2rem; cursor: pointer; box-shadow: 0 5px 30px rgba(57, 255, 20, 0.4); }
@@ -160,11 +336,79 @@
         .btn-stop { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ff4444, #aa0000); border: none; font-size: 1.5rem; cursor: pointer; }
         .btn-reveal { padding: 15px 30px; background: linear-gradient(135deg, var(--accent-cyan), #0088aa); border: none; border-radius: 50px; cursor: pointer; font-weight: bold; }
 
-        /* CLASSIFICA */
+        /* CLASSIFICA CON CONTROLLI PUNTEGGIO */
         .scoreboard { background: var(--bg-card); border-radius: 20px; padding: 25px; border: 1px solid rgba(255, 255, 255, 0.1); }
-        .team-score { display: flex; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .scoreboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .scoreboard-title {
+            color: var(--accent-gold);
+            font-family: 'Bangers';
+        }
+        .team-score { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 12px; 
+            margin-bottom: 10px; 
+            background: rgba(255,255,255,0.05); 
+            border-radius: 10px; 
+        }
         .team-score.disconnected { opacity: 0.5; border: 1px dashed #ff4444; }
-        .team-score-points { font-family: 'Bangers', cursive; font-size: 1.5rem; color: var(--accent-gold); }
+        .team-score-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .team-score-info img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .team-score-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .score-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        .score-btn:hover {
+            transform: scale(1.15);
+        }
+        .score-btn:active {
+            transform: scale(0.95);
+        }
+        .score-btn.minus {
+            background: linear-gradient(135deg, #ff4444, #aa0000);
+            color: white;
+        }
+        .score-btn.plus {
+            background: linear-gradient(135deg, var(--accent-green), #00aa00);
+            color: white;
+        }
+        .team-score-points { 
+            font-family: 'Bangers', cursive; 
+            font-size: 1.4rem; 
+            color: var(--accent-gold); 
+            min-width: 40px;
+            text-align: center;
+        }
 
         /* TITOLO RIVELATO - FISSO IN ALTO */
         .revealed-title-banner {
@@ -212,15 +456,56 @@
         @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         
         .booking-team-name { font-family: 'Bangers', cursive; font-size: 2.5rem; margin-bottom: 5px; color: var(--text); }
-        .booking-actions { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
+        
+        /* AZIONI SISTEMA 1 */
+        .booking-actions-system1 { display: flex; gap: 15px; justify-content: center; margin-top: 20px; }
         .btn-correct { padding: 15px 30px; background: var(--accent-green); border: none; border-radius: 50px; font-weight: bold; cursor: pointer; flex: 1; }
         .btn-wrong { padding: 15px 30px; background: #ff4444; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; color: white; flex: 1; }
+        
+        /* AZIONI SISTEMA 2 */
+        .booking-actions-system2 { margin-top: 20px; display: none; }
+        .booking-actions-system2 .action-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .booking-actions-system2 .action-btn {
+            flex: 1;
+            padding: 15px 10px;
+            border: none;
+            border-radius: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+        .booking-actions-system2 .action-btn:hover {
+            transform: scale(1.03);
+        }
+        .action-btn.both-correct {
+            background: var(--accent-green);
+            color: #000;
+        }
+        .action-btn.one-correct {
+            background: var(--accent-cyan);
+            color: #000;
+        }
+        .action-btn.both-wrong {
+            background: #ff4444;
+            color: white;
+        }
+        .action-btn .points {
+            display: block;
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+        
         .btn-reveal-modal { background: var(--accent-cyan); color: #000; width: 100%; margin-bottom: 15px; padding: 15px 30px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; }
 
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); padding: 15px 30px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2); z-index: 200; transition: transform 0.3s ease; }
         .toast.active { transform: translateX(-50%) translateY(0); }
 
-        /* NUOVO: Info sessione */
+        /* Info sessione */
         .session-info {
             background: rgba(57, 255, 20, 0.1);
             border: 1px solid var(--accent-green);
@@ -243,7 +528,7 @@
             color: var(--accent-green);
         }
 
-        /* NUOVO: Warning squadre disconnesse */
+        /* Warning squadre disconnesse */
         .disconnected-warning {
             background: rgba(255, 68, 68, 0.1);
             border: 1px solid #ff4444;
@@ -267,10 +552,142 @@
             color: #fff;
         }
 
+        /* ===== COUNTDOWN OVERLAY ===== */
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 500;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .countdown-overlay.active {
+            display: flex;
+        }
+        
+        .countdown-number {
+            font-family: 'Bangers', cursive;
+            font-size: 20rem;
+            color: var(--accent-gold);
+            text-shadow: 0 0 80px rgba(255, 215, 0, 0.8), 0 0 120px rgba(255, 215, 0, 0.5);
+            animation: countdownPulse 0.8s ease-out;
+            opacity: 0;
+        }
+        .countdown-number.visible {
+            opacity: 1;
+        }
+        
+        @keyframes countdownPulse {
+            0% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .countdown-text {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            margin-top: 30px;
+        }
+        
+        /* Indicatore visivo del beat */
+        .beat-indicator {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 8px solid transparent;
+            pointer-events: none;
+            transition: border-color 0.1s ease;
+        }
+        .beat-indicator.flash {
+            border-color: var(--accent-gold);
+            animation: beatFlash 0.15s ease-out;
+        }
+        @keyframes beatFlash {
+            0% { border-color: var(--accent-gold); }
+            100% { border-color: transparent; }
+        }
+
+        /* Game header con settings */
+        .game-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
+    
+    <!-- Modal Impostazioni -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2 class="settings-title">⚙️ Impostazioni</h2>
+                <button class="settings-close" onclick="closeSettings()">✕</button>
+            </div>
+            
+            <div class="scoring-section">
+                <h3>🏆 Sistema di Punteggio</h3>
+                
+                <div class="scoring-option selected" data-system="1" onclick="selectScoringSystem(1)">
+                    <div class="scoring-option-header">
+                        <div class="scoring-radio"></div>
+                        <div class="scoring-option-title">Sistema Classico</div>
+                    </div>
+                    <div class="scoring-option-desc">
+                        Punteggio semplice: indovina o non indovina
+                    </div>
+                    <div class="scoring-details">
+                        <span class="scoring-badge positive">✓ Giusto: +1</span>
+                        <span class="scoring-badge negative">✗ Sbagliato: -1</span>
+                    </div>
+                </div>
+                
+                <div class="scoring-option" data-system="2" onclick="selectScoringSystem(2)">
+                    <div class="scoring-option-header">
+                        <div class="scoring-radio"></div>
+                        <div class="scoring-option-title">Sistema Titolo + Autore</div>
+                    </div>
+                    <div class="scoring-option-desc">
+                        Valutazione separata per titolo e autore della canzone
+                    </div>
+                    <div class="scoring-details">
+                        <span class="scoring-badge positive">✓✓ Entrambi giusti: +2</span>
+                        <span class="scoring-badge neutral">✓✗ Solo uno giusto: 0</span>
+                        <span class="scoring-badge negative">✗✗ Entrambi sbagliati: -2</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="closeSettings()">✓ Salva e Chiudi</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Countdown Overlay -->
+    <div class="countdown-overlay" id="countdown-overlay">
+        <div class="beat-indicator" id="beat-indicator"></div>
+        <div class="countdown-number" id="countdown-number">3</div>
+        <div class="countdown-text">Silenzio in sala...</div>
+    </div>
     
     <!-- Banner titolo rivelato (sempre in cima, sopra tutto) -->
     <div class="revealed-title-banner" id="revealed-banner">
@@ -282,12 +699,13 @@
         <header class="header">
             <h1 class="logo">SARABANDA</h1>
             <p class="subtitle">🎤 Server Console 🎤</p>
+            <button class="settings-btn" onclick="openSettings()" title="Impostazioni">⚙️</button>
         </header>
 
         <div id="setup-screen" class="screen active">
             
             <div class="ip-box">
-                <div class="ip-text">🔗 INDIRIZZO CONNESSIONE SQUADRE</div>
+                <div class="ip-text">📡 INDIRIZZO CONNESSIONE SQUADRE</div>
                 <div class="ip-sub">Controlla il terminale nero (Prompt dei comandi) per vedere l'Indirizzo IP da dare agli amici.</div>
                 <div class="ip-sub" style="margin-top:5px; color:#fff;">Esempio: http://192.168.1.X:3000/mobile.html</div>
             </div>
@@ -315,11 +733,24 @@
                 <button class="btn btn-primary" id="start-game" disabled>
                     🎮 AVVIA IL GIOCO
                 </button>
+                <div class="current-scoring-indicator">
+                    <span class="label">Sistema:</span>
+                    <span class="value" id="current-system-label">Classico (+1/-1)</span>
+                </div>
             </div>
         </div>
 
         <div id="game-screen" class="screen">
-            <!-- NUOVO: Info sessione attiva -->
+            <!-- Header con settings -->
+            <div class="game-header-bar">
+                <div class="current-scoring-indicator">
+                    <span class="label">Sistema:</span>
+                    <span class="value" id="game-system-label">Classico (+1/-1)</span>
+                </div>
+                <button class="settings-btn" onclick="openSettings()" title="Impostazioni" style="position: static;">⚙️</button>
+            </div>
+            
+            <!-- Info sessione attiva -->
             <div class="session-info" id="session-info">
                 <div class="session-text">
                     <strong>Sessione attiva</strong> - Le squadre possono riconnettersi
@@ -327,7 +758,7 @@
                 <div class="session-badge" id="session-id">ID: ---</div>
             </div>
             
-            <!-- NUOVO: Warning squadre disconnesse -->
+            <!-- Warning squadre disconnesse -->
             <div class="disconnected-warning" id="disconnected-warning">
                 <div class="warning-icon">⚠️</div>
                 <div class="warning-text">
@@ -339,9 +770,6 @@
                 <div class="main-area">
                     <div class="visualizer-container">
                         <canvas id="visualizer"></canvas>
-                        <div class="now-playing">
-                            <div class="song-title hidden" id="song-title">???</div>
-                        </div>
                         <div class="controls">
                             <button class="btn-play" id="btn-play">▶</button>
                             <button class="btn-stop" id="btn-stop">⏹</button>
@@ -354,17 +782,19 @@
                         <span style="margin: 0 10px;">R: Rivela</span>
                     </div>
                     
-                    <!-- NUOVO: Bottone reset in fondo -->
+                    <!-- Bottone reset in fondo -->
                     <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
                         <button class="btn btn-danger" id="btn-reset-game" onclick="confirmResetGame()">
-                            🔄 TERMINA E RESETTA PARTITA
+                            🗑️ TERMINA E RESETTA PARTITA
                         </button>
                     </div>
                 </div>
 
                 <div class="sidebar">
                     <div class="scoreboard">
-                        <h3 style="color:var(--accent-gold); font-family:'Bangers'; margin-bottom:15px; text-align:center;">🏆 Classifica</h3>
+                        <div class="scoreboard-header">
+                            <h3 class="scoreboard-title">🏆 Classifica</h3>
+                        </div>
                         <div id="scoreboard-list"></div>
                     </div>
                 </div>
@@ -380,9 +810,32 @@
         
         <button class="btn btn-reveal-modal" id="btn-reveal-modal">👁 RIVELA TITOLO (VERIFICA)</button>
 
-        <div class="booking-actions">
-            <button class="btn-correct" id="btn-correct">✔ GIUSTO (+1)</button>
+        <!-- Sistema 1: Giusto/Sbagliato semplice -->
+        <div class="booking-actions-system1" id="booking-actions-system1">
+            <button class="btn-correct" id="btn-correct">✓ GIUSTO (+1)</button>
             <button class="btn-wrong" id="btn-wrong">✗ SBAGLIATO (-1)</button>
+        </div>
+        
+        <!-- Sistema 2: Titolo + Autore -->
+        <div class="booking-actions-system2" id="booking-actions-system2">
+            <div class="action-row">
+                <button class="action-btn both-correct" onclick="handleSystem2Answer('both')">
+                    ✓✓ Titolo E Autore
+                    <span class="points">+2</span>
+                </button>
+            </div>
+            <div class="action-row">
+                <button class="action-btn one-correct" onclick="handleSystem2Answer('one')">
+                    ✓✗ Solo Titolo o Autore
+                    <span class="points">0</span>
+                </button>
+            </div>
+            <div class="action-row">
+                <button class="action-btn both-wrong" onclick="handleSystem2Answer('none')">
+                    ✗✗ Nessuno dei due
+                    <span class="points">-2</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -396,7 +849,15 @@
             songs: [], playedSongs: [], currentSong: null,
             teams: [], isPlaying: false, bookedTeamId: null,
             audioCtx: null, analyser: null, source: null, animationId: null,
-            sessionId: null // NUOVO
+            sessionId: null,
+            // Per il replay della canzone
+            currentAudioBuffer: null,
+            currentStartTime: 0,
+            isCountingDown: false,
+            pausedAt: 0,           // Punto in cui la canzone è stata fermata
+            playbackStartedAt: 0,  // Timestamp di quando è iniziata la riproduzione
+            songRevealed: false,   // Flag per tracciare se la canzone è già stata rivelata
+            scoringSystem: 1       // 1 = classico, 2 = titolo+autore
         };
 
         // ELEMENTI DOM
@@ -410,7 +871,6 @@
             songCount: document.getElementById('song-count'),
             startGame: document.getElementById('start-game'),
             visualizer: document.getElementById('visualizer'),
-            songTitle: document.getElementById('song-title'),
             overlay: document.getElementById('overlay'),
             bookingAlert: document.getElementById('booking-alert'),
             bookingTeamName: document.getElementById('booking-team-name'),
@@ -427,8 +887,56 @@
             sessionInfo: document.getElementById('session-info'),
             sessionId: document.getElementById('session-id'),
             disconnectedWarning: document.getElementById('disconnected-warning'),
-            disconnectedCount: document.getElementById('disconnected-count')
+            disconnectedCount: document.getElementById('disconnected-count'),
+            countdownOverlay: document.getElementById('countdown-overlay'),
+            countdownNumber: document.getElementById('countdown-number'),
+            beatIndicator: document.getElementById('beat-indicator'),
+            settingsModal: document.getElementById('settings-modal'),
+            bookingActionsSystem1: document.getElementById('booking-actions-system1'),
+            bookingActionsSystem2: document.getElementById('booking-actions-system2'),
+            currentSystemLabel: document.getElementById('current-system-label'),
+            gameSystemLabel: document.getElementById('game-system-label')
         };
+
+        // --- GESTIONE IMPOSTAZIONI ---
+        
+        function openSettings() {
+            el.settingsModal.classList.add('active');
+        }
+        
+        function closeSettings() {
+            el.settingsModal.classList.remove('active');
+        }
+        
+        function selectScoringSystem(system) {
+            state.scoringSystem = system;
+            
+            // Aggiorna UI opzioni
+            document.querySelectorAll('.scoring-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (parseInt(opt.dataset.system) === system) {
+                    opt.classList.add('selected');
+                }
+            });
+            
+            // Aggiorna label
+            const label = system === 1 ? 'Classico (+1/-1)' : 'Titolo+Autore (+2/0/-2)';
+            el.currentSystemLabel.textContent = label;
+            el.gameSystemLabel.textContent = label;
+            
+            // Aggiorna visibilità azioni nel modal prenotazione
+            updateBookingActionsVisibility();
+        }
+        
+        function updateBookingActionsVisibility() {
+            if (state.scoringSystem === 1) {
+                el.bookingActionsSystem1.style.display = 'flex';
+                el.bookingActionsSystem2.style.display = 'none';
+            } else {
+                el.bookingActionsSystem1.style.display = 'none';
+                el.bookingActionsSystem2.style.display = 'block';
+            }
+        }
 
         // --- GESTIONE SOCKET.IO ---
 
@@ -441,7 +949,7 @@
             updateDisconnectedWarning();
         });
 
-        // NUOVO: Stato sessione
+        // Stato sessione
         socket.on('session_status', (data) => {
             if (data.active) {
                 state.sessionId = data.sessionId;
@@ -466,6 +974,9 @@
             el.bookingTeamName.textContent = team.name;
             el.bookingGif.src = '/GIF/' + team.gif;
             
+            // Aggiorna visibilità azioni in base al sistema
+            updateBookingActionsVisibility();
+            
             el.overlay.classList.add('active');
             el.bookingAlert.classList.add('active');
         });
@@ -475,7 +986,7 @@
         function startGame() {
             if (state.songs.length === 0) return alert("Carica almeno una canzone!");
             
-            // NUOVO: Notifica il server che il gioco è iniziato (attiva la sessione)
+            // Notifica il server che il gioco è iniziato (attiva la sessione)
             socket.emit('judge_action', { type: 'start_game' });
             
             el.setupScreen.classList.remove('active');
@@ -483,7 +994,7 @@
             initAudio();
         }
 
-        // NUOVO: Conferma reset partita
+        // Conferma reset partita
         function confirmResetGame() {
             if (confirm('Sei sicuro di voler terminare la partita?\n\nTutte le squadre verranno disconnesse e i punteggi azzerati.')) {
                 socket.emit('judge_action', { type: 'reset_game' });
@@ -502,7 +1013,7 @@
             }
         }
 
-        // NUOVO: Aggiorna warning squadre disconnesse
+        // Aggiorna warning squadre disconnesse
         function updateDisconnectedWarning() {
             const disconnected = state.teams.filter(t => !t.connected);
             if (disconnected.length > 0) {
@@ -513,11 +1024,78 @@
             }
         }
 
+        // ===== COUNTDOWN CON METRONOMO =====
+        
+        // Crea un suono di metronomo usando Web Audio API
+        function playMetronomeClick() {
+            const osc = state.audioCtx.createOscillator();
+            const gain = state.audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(state.audioCtx.destination);
+            
+            // Frequenza del click (tipo wood block)
+            osc.frequency.value = 1200;
+            osc.type = 'sine';
+            
+            // Envelope del suono (attacco veloce, decadimento rapido)
+            const now = state.audioCtx.currentTime;
+            gain.gain.setValueAtTime(0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+            
+            osc.start(now);
+            osc.stop(now + 0.1);
+            
+            // Flash visivo
+            el.beatIndicator.classList.add('flash');
+            setTimeout(() => el.beatIndicator.classList.remove('flash'), 150);
+        }
+        
+        // Mostra countdown 3, 2, 1 e poi parte la canzone
+        function showCountdown() {
+            return new Promise((resolve) => {
+                state.isCountingDown = true;
+                el.countdownOverlay.classList.add('active');
+                
+                const counts = [3, 2, 1];
+                let index = 0;
+                
+                // Funzione per mostrare un numero
+                function showNumber() {
+                    if (index < counts.length) {
+                        const num = counts[index];
+                        el.countdownNumber.classList.remove('visible');
+                        
+                        // Breve pausa per l'animazione, poi mostra
+                        setTimeout(() => {
+                            el.countdownNumber.textContent = num;
+                            el.countdownNumber.classList.add('visible');
+                            playMetronomeClick();
+                        }, index === 0 ? 0 : 30); // Primo numero immediato
+                        
+                        index++;
+                        setTimeout(showNumber, 500); // 500ms tra ogni numero
+                    } else {
+                        // Fine countdown - parte la canzone
+                        el.countdownOverlay.classList.remove('active');
+                        el.countdownNumber.classList.remove('visible');
+                        state.isCountingDown = false;
+                        resolve();
+                    }
+                }
+                
+                // Parte subito
+                showNumber();
+            });
+        }
+
         async function playNewSong() {
             if (state.songs.length === 0) return showToast("Nessuna canzone!");
+            if (state.isCountingDown) return; // Evita doppi click durante countdown
             
             stopSong(); // Resetta stato precedente
             hideRevealedTitle(); // Nascondi banner titolo precedente
+            state.songRevealed = false; // Reset flag rivelazione
             
             // Scegli canzone random non ancora suonata
             const available = state.songs.filter(s => !state.playedSongs.includes(s));
@@ -531,43 +1109,70 @@
             state.currentSong = song;
             state.playedSongs.push(song);
 
-            // UI Reset
-            el.songTitle.textContent = song.name;
-            el.songTitle.className = 'song-title hidden';
+            // Imposta il titolo nel banner
             el.revealedTitleText.textContent = song.name;
             
-            // Carica e Suona
+            // Carica il buffer audio
             try {
                 const buffer = await song.file.arrayBuffer();
                 const audioBuffer = await state.audioCtx.decodeAudioData(buffer);
                 
+                // Salva il buffer per eventuale replay
+                state.currentAudioBuffer = audioBuffer;
+                
                 // Punto di partenza random (tra 10% e 70%)
                 const startPercent = 0.1 + Math.random() * 0.6;
-                const startTime = audioBuffer.duration * startPercent;
+                state.currentStartTime = audioBuffer.duration * startPercent;
 
-                state.source = state.audioCtx.createBufferSource();
-                state.source.buffer = audioBuffer;
-                state.source.connect(state.analyser);
-                state.source.start(0, startTime);
+                // === COUNTDOWN CON METRONOMO ===
+                await showCountdown();
                 
-                state.isPlaying = true;
-                
-                // SBLOCCA I PULSANTI SUI TELEFONI
-                socket.emit('judge_action', { type: 'unlock_buzzer' });
-
-                drawVisualizer();
-
-                state.source.onended = () => {
-                   // Fine naturale della canzone
-                };
+                // Ora parti con la canzone
+                startPlayback(state.currentStartTime);
 
             } catch (e) {
                 console.error(e);
                 alert("Errore riproduzione file");
             }
         }
+        
+        // Funzione separata per avviare la riproduzione
+        function startPlayback(startTime) {
+            if (!state.currentAudioBuffer) return;
+            
+            // Ferma eventuale riproduzione precedente
+            if (state.source) {
+                try { state.source.stop(); } catch(e){}
+            }
+            
+            state.source = state.audioCtx.createBufferSource();
+            state.source.buffer = state.currentAudioBuffer;
+            state.source.connect(state.analyser);
+            state.source.start(0, startTime);
+            
+            // Salva il punto di partenza e il timestamp per calcolare dove siamo
+            state.pausedAt = startTime;
+            state.playbackStartedAt = state.audioCtx.currentTime;
+            
+            state.isPlaying = true;
+            
+            // SBLOCCA I PULSANTI SUI TELEFONI
+            socket.emit('judge_action', { type: 'unlock_buzzer' });
+
+            drawVisualizer();
+
+            state.source.onended = () => {
+               // Fine naturale della canzone
+            };
+        }
 
         function stopSong(notifyServer = true) {
+            // Calcola e salva il punto in cui siamo arrivati
+            if (state.isPlaying && state.audioCtx) {
+                const elapsedTime = state.audioCtx.currentTime - state.playbackStartedAt;
+                state.pausedAt = state.pausedAt + elapsedTime;
+            }
+            
             if (state.source) {
                 try { state.source.stop(); } catch(e){}
                 state.source = null;
@@ -584,25 +1189,72 @@
         }
 
         function revealSong() {
-            el.songTitle.classList.remove('hidden');
-            el.songTitle.classList.add('revealed');
+            // Se la canzone è già stata rivelata e sta suonando, non fare nulla
+            if (state.songRevealed && state.isPlaying) {
+                return;
+            }
             
             // Mostra il banner in alto (visibile anche sopra il modal)
             el.revealedBanner.classList.add('active');
+            state.songRevealed = true; // Marca come rivelata
+            
+            // Fai ripartire la canzone dal punto in cui è stata fermata (solo se non sta già suonando)
+            if (state.currentAudioBuffer && !state.isPlaying) {
+                startPlayback(state.pausedAt);
+            }
         }
 
         function hideRevealedTitle() {
             el.revealedBanner.classList.remove('active');
+            state.songRevealed = false; // Reset flag
         }
 
-        // Gestione Risposte dal Modal
+        // Gestione Risposte Sistema 1 (dal Modal)
         function handleAnswer(isCorrect) {
             const delta = isCorrect ? 1 : -1;
             socket.emit('judge_action', { type: 'update_score', teamId: state.bookedTeamId, delta: delta });
             
-            if (isCorrect) revealSong();
+            // Rivela solo se risposta corretta E canzone non ancora rivelata
+            if (isCorrect && !state.songRevealed) {
+                revealSong();
+            }
             
             closeModal();
+        }
+        
+        // Gestione Risposte Sistema 2 (Titolo + Autore)
+        function handleSystem2Answer(result) {
+            let delta = 0;
+            let shouldReveal = false;
+            
+            switch(result) {
+                case 'both':
+                    delta = 2;
+                    shouldReveal = true;
+                    break;
+                case 'one':
+                    delta = 0;
+                    shouldReveal = true; // Rivelato perché ha indovinato qualcosa
+                    break;
+                case 'none':
+                    delta = -2;
+                    shouldReveal = false;
+                    break;
+            }
+            
+            socket.emit('judge_action', { type: 'update_score', teamId: state.bookedTeamId, delta: delta });
+            
+            if (shouldReveal && !state.songRevealed) {
+                revealSong();
+            }
+            
+            closeModal();
+        }
+        
+        // Modifica manuale punteggio da classifica
+        function adjustScore(teamId, delta) {
+            socket.emit('judge_action', { type: 'update_score', teamId: teamId, delta: delta });
+            showToast(`Punteggio ${delta > 0 ? '+' : ''}${delta}`);
         }
 
         function closeModal() {
@@ -674,12 +1326,16 @@
             const sorted = [...state.teams].sort((a, b) => b.score - a.score);
             el.scoreboardList.innerHTML = sorted.map(t => `
                 <div class="team-score ${t.connected === false ? 'disconnected' : ''}">
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <img src="/GIF/${t.gif}" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
+                    <div class="team-score-info">
+                        <img src="/GIF/${t.gif}">
                         <span>${t.name}</span>
                         ${t.connected === false ? '<span style="color:#ff4444; font-size:0.7rem;">⚠️</span>' : ''}
                     </div>
-                    <div class="team-score-points">${t.score}</div>
+                    <div class="team-score-controls">
+                        <button class="score-btn minus" onclick="adjustScore('${t.id}', -1)" title="Togli 1 punto">−</button>
+                        <div class="team-score-points">${t.score}</div>
+                        <button class="score-btn plus" onclick="adjustScore('${t.id}', 1)" title="Aggiungi 1 punto">+</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -728,10 +1384,20 @@
 
         // Tasti Rapidi
         document.addEventListener('keydown', (e) => {
+            // Chiudi modal impostazioni con Escape
+            if (e.code === 'Escape' && el.settingsModal.classList.contains('active')) {
+                closeSettings();
+                return;
+            }
+            
             if (!el.gameScreen.classList.contains('active')) return;
+            if (state.isCountingDown) return; // Ignora tasti durante countdown
             if (e.code === 'Space' && !state.bookedTeamId) { e.preventDefault(); playNewSong(); }
             if (e.key.toLowerCase() === 'r') revealSong();
         });
+        
+        // Inizializza visibilità azioni
+        updateBookingActionsVisibility();
 
     </script>
 </body>

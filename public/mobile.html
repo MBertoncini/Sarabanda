@@ -55,7 +55,6 @@
             cursor: not-allowed;
         }
         
-        /* Schermata Login */
         #login-screen { 
             padding: 20px; 
             max-width: 500px;
@@ -77,7 +76,6 @@
             color: #888;
         }
         
-        /* NUOVO: Sezione riconnessione */
         .rejoin-section {
             background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(255, 45, 149, 0.1));
             border: 2px solid #00f5ff;
@@ -103,9 +101,7 @@
             align-items: center;
             gap: 10px;
         }
-        .rejoin-title span {
-            font-size: 1.5rem;
-        }
+        .rejoin-title span { font-size: 1.5rem; }
         
         .rejoin-team-list {
             display: flex;
@@ -128,9 +124,7 @@
             background: rgba(255, 255, 255, 0.1);
             border-color: #ffd700;
         }
-        .rejoin-team-card:active {
-            transform: scale(0.98);
-        }
+        .rejoin-team-card:active { transform: scale(0.98); }
         
         .rejoin-team-gif {
             width: 50px;
@@ -140,27 +134,15 @@
             border: 2px solid #ffd700;
         }
         
-        .rejoin-team-info {
-            flex-grow: 1;
-        }
+        .rejoin-team-info { flex-grow: 1; }
         .rejoin-team-name {
             font-weight: bold;
             font-size: 1.1rem;
             color: #ffd700;
         }
-        .rejoin-team-members {
-            font-size: 0.85rem;
-            color: #888;
-        }
-        .rejoin-team-score {
-            font-size: 0.9rem;
-            color: #39ff14;
-        }
-        
-        .rejoin-arrow {
-            font-size: 1.5rem;
-            color: #ffd700;
-        }
+        .rejoin-team-members { font-size: 0.85rem; color: #888; }
+        .rejoin-team-score { font-size: 0.9rem; color: #39ff14; }
+        .rejoin-arrow { font-size: 1.5rem; color: #ffd700; }
         
         .divider {
             display: flex;
@@ -174,14 +156,9 @@
             height: 1px;
             background: #333;
         }
-        .divider span {
-            padding: 0 15px;
-            font-size: 0.9rem;
-        }
+        .divider span { padding: 0 15px; font-size: 0.9rem; }
         
-        .form-section {
-            margin-bottom: 25px;
-        }
+        .form-section { margin-bottom: 25px; }
         .form-section label {
             display: block;
             margin-bottom: 8px;
@@ -191,7 +168,6 @@
             letter-spacing: 1px;
         }
         
-        /* Selezione GIF */
         .selection-title {
             color: #00f5ff;
             font-size: 1.1rem;
@@ -200,9 +176,7 @@
             align-items: center;
             gap: 10px;
         }
-        .selection-title span {
-            font-size: 1.5rem;
-        }
+        .selection-title span { font-size: 1.5rem; }
         
         .gif-grid {
             display: grid;
@@ -228,21 +202,14 @@
             position: relative;
             background: #252540;
         }
-        .gif-option img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        .gif-option:hover:not(.taken) {
-            border-color: #555;
-            transform: scale(1.05);
-        }
+        .gif-option img { width: 100%; height: auto; display: block; }
+        .gif-option:hover:not(.taken) { border-color: #555; transform: scale(1.05); }
         .gif-option.selected {
             border-color: #ffd700;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
         }
         .gif-option.selected::after {
-            content: '✔';
+            content: '✓';
             position: absolute;
             top: 5px;
             right: 5px;
@@ -257,13 +224,7 @@
             font-weight: bold;
             font-size: 14px;
         }
-        
-        /* GIF già presa da altra squadra */
-        .gif-option.taken {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
+        .gif-option.taken { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
         .gif-option.taken::before {
             content: '🚫';
             position: absolute;
@@ -274,7 +235,6 @@
             z-index: 2;
         }
         
-        /* Selezione Suoni */
         .sound-grid {
             display: flex;
             flex-direction: column;
@@ -298,14 +258,8 @@
             transition: all 0.3s ease;
             background: rgba(255,255,255,0.03);
         }
-        .sound-option:hover:not(.taken) {
-            background: rgba(255,255,255,0.08);
-            border-color: #444;
-        }
-        .sound-option.selected {
-            border-color: #ff2d95;
-            background: rgba(255, 45, 149, 0.15);
-        }
+        .sound-option:hover:not(.taken) { background: rgba(255,255,255,0.08); border-color: #444; }
+        .sound-option.selected { border-color: #ff2d95; background: rgba(255, 45, 149, 0.15); }
         .sound-option .sound-icon {
             width: 40px;
             height: 40px;
@@ -317,18 +271,9 @@
             font-size: 1.2rem;
             flex-shrink: 0;
         }
-        .sound-option.selected .sound-icon {
-            animation: pulse-sound 1s infinite;
-        }
-        @keyframes pulse-sound {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        .sound-option .sound-name {
-            flex-grow: 1;
-            font-size: 0.95rem;
-            color: #ddd;
-        }
+        .sound-option.selected .sound-icon { animation: pulse-sound 1s infinite; }
+        @keyframes pulse-sound { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .sound-option .sound-name { flex-grow: 1; font-size: 0.95rem; color: #ddd; }
         .sound-option .play-btn {
             width: 36px;
             height: 36px;
@@ -342,39 +287,14 @@
             justify-content: center;
             transition: background 0.3s;
         }
-        .sound-option .play-btn:hover {
-            background: #555;
-        }
+        .sound-option .play-btn:hover { background: #555; }
+        .sound-option.taken { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+        .sound-option.taken .sound-name::after { content: ' (già scelto)'; color: #ff4444; font-size: 0.8rem; }
         
-        /* Suono già preso da altra squadra */
-        .sound-option.taken {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        .sound-option.taken .sound-name::after {
-            content: ' (già scelto)';
-            color: #ff4444;
-            font-size: 0.8rem;
-        }
+        .loading-text { text-align: center; color: #666; padding: 20px; }
+        .form-actions { text-align: center; padding: 20px 0; }
         
-        .loading-text {
-            text-align: center;
-            color: #666;
-            padding: 20px;
-        }
-        
-        .form-actions {
-            text-align: center;
-            padding: 20px 0;
-        }
-        
-        /* Schermata Pulsantone */
-        #game-screen { 
-            display: none; 
-            height: 100vh; 
-            flex-direction: column; 
-        }
+        #game-screen { display: none; height: 100vh; flex-direction: column; }
         
         .game-header {
             display: flex;
@@ -383,11 +303,7 @@
             padding: 15px 20px;
             background: rgba(255, 255, 255, 0.05);
         }
-        .my-team-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .my-team-info { display: flex; align-items: center; gap: 10px; }
         .my-team-gif {
             width: 40px;
             height: 40px;
@@ -395,22 +311,10 @@
             object-fit: cover;
             border: 2px solid #ffd700;
         }
-        .my-team-name {
-            font-weight: bold;
-            color: #ffd700;
-        }
-        .my-team-score {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #39ff14;
-        }
+        .my-team-name { font-weight: bold; color: #ffd700; }
+        .my-team-score { font-size: 1.5rem; font-weight: bold; color: #39ff14; }
         
-        .status-text { 
-            padding: 20px; 
-            font-size: 1.2rem; 
-            color: #888; 
-            text-align: center;
-        }
+        .status-text { padding: 20px; font-size: 1.2rem; color: #888; text-align: center; }
         
         #buzzer {
             flex-grow: 1; 
@@ -431,17 +335,13 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Pulsante attivo */
         #buzzer.active {
             background: radial-gradient(circle, #ff2d95, #aa0055);
             color: white; 
             cursor: pointer;
             animation: pulse 1s infinite;
         }
-        #buzzer.active:active { 
-            transform: translateY(10px); 
-            box-shadow: 0 0 0 #111; 
-        }
+        #buzzer.active:active { transform: translateY(10px); box-shadow: 0 0 0 #111; }
 
         @keyframes pulse { 
             0% { box-shadow: 0 0 0 0 rgba(255, 45, 149, 0.7); } 
@@ -449,7 +349,6 @@
             100% { box-shadow: 0 0 0 0 rgba(255, 45, 149, 0); } 
         }
 
-        /* Messaggio "Hai prenotato" */
         #overlay-msg {
             position: fixed; 
             top: 0; 
@@ -471,13 +370,8 @@
             border: 5px solid #ffd700; 
             margin-bottom: 20px;
         }
-        #overlay-msg h1 {
-            font-size: 1.8rem;
-            text-align: center;
-            padding: 0 20px;
-        }
+        #overlay-msg h1 { font-size: 1.8rem; text-align: center; padding: 0 20px; }
         
-        /* Toast notifiche */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -493,13 +387,8 @@
             text-align: center;
             max-width: 90%;
         }
-        .toast.active {
-            transform: translateX(-50%) translateY(0);
-        }
-        .toast.success {
-            background: #39ff14;
-            color: black;
-        }
+        .toast.active { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: #39ff14; color: black; }
     </style>
 </head>
 <body>
@@ -510,15 +399,12 @@
             <p>Crea la tua squadra</p>
         </div>
         
-        <!-- NUOVO: Sezione riconnessione -->
         <div class="rejoin-section" id="rejoin-section">
             <div class="rejoin-title"><span>🔄</span> Riconnettiti alla tua squadra</div>
             <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">
                 Una partita è in corso! Seleziona la tua squadra per rientrare:
             </p>
-            <div class="rejoin-team-list" id="rejoin-team-list">
-                <!-- Le squadre disconnesse appariranno qui -->
-            </div>
+            <div class="rejoin-team-list" id="rejoin-team-list"></div>
             <div class="divider"><span>oppure crea una nuova squadra</span></div>
         </div>
         
@@ -573,7 +459,7 @@
     <script>
         const socket = io();
         let myTeam = null;
-        let sessionToken = null; // NUOVO: Token per riconnessione
+        let sessionToken = null;
         let selectedGif = null;
         let selectedSound = null;
         let previewAudio = null;
@@ -582,7 +468,7 @@
         let usedGifs = new Set();
         let usedSounds = new Set();
         let isRegistering = false;
-        let disconnectedTeams = []; // NUOVO: Lista squadre disconnesse
+        let disconnectedTeams = [];
         
         const buzzer = document.getElementById('buzzer');
         const gifGrid = document.getElementById('gif-grid');
@@ -591,7 +477,6 @@
         const rejoinSection = document.getElementById('rejoin-section');
         const rejoinTeamList = document.getElementById('rejoin-team-list');
 
-        // NUOVO: Carica token salvato
         function loadSavedToken() {
             try {
                 sessionToken = localStorage.getItem('sarabanda_token');
@@ -602,7 +487,6 @@
             }
         }
 
-        // NUOVO: Salva token
         function saveToken(token, teamName) {
             try {
                 localStorage.setItem('sarabanda_token', token);
@@ -613,7 +497,6 @@
             }
         }
 
-        // NUOVO: Cancella token
         function clearToken() {
             try {
                 localStorage.removeItem('sarabanda_token');
@@ -624,7 +507,6 @@
             }
         }
 
-        // Mostra toast
         function showToast(message, type = 'error', duration = 3000) {
             toast.textContent = message;
             toast.className = 'toast';
@@ -633,7 +515,6 @@
             setTimeout(() => toast.classList.remove('active'), duration);
         }
 
-        // NUOVO: Renderizza squadre disconnesse per riconnessione
         function renderDisconnectedTeams() {
             if (disconnectedTeams.length === 0) {
                 rejoinSection.classList.remove('active');
@@ -654,7 +535,6 @@
             `).join('');
         }
 
-        // NUOVO: Riconnettiti a una squadra
         function rejoinTeam(teamName) {
             const saved = loadSavedToken();
             socket.emit('rejoin_team', {
@@ -663,7 +543,6 @@
             });
         }
 
-        // Carica suggerimenti dal server
         async function loadHints() {
             try {
                 const response = await fetch('/api/hints');
@@ -689,7 +568,6 @@
             }
         }
 
-        // Carica le GIF disponibili
         async function loadGifs() {
             try {
                 const response = await fetch('/api/gifs');
@@ -700,7 +578,6 @@
             }
         }
 
-        // Renderizza le GIF con stato taken
         function renderGifs() {
             if (allGifs.length === 0) {
                 gifGrid.innerHTML = '<div class="loading-text">Nessuna GIF disponibile</div>';
@@ -719,7 +596,6 @@
                 `;
             }).join('');
             
-            // Se la GIF selezionata è stata presa, deseleziona
             if (selectedGif && usedGifs.has(selectedGif)) {
                 selectedGif = null;
                 const firstAvailable = allGifs.find(g => !usedGifs.has(g));
@@ -729,7 +605,6 @@
                 }
             }
             
-            // Se nessuna selezionata, seleziona la prima disponibile
             if (!selectedGif) {
                 const firstAvailable = allGifs.find(g => !usedGifs.has(g));
                 if (firstAvailable) {
@@ -739,7 +614,6 @@
             }
         }
 
-        // Carica i suoni disponibili
         async function loadSounds() {
             try {
                 const response = await fetch('/api/sounds');
@@ -750,7 +624,6 @@
             }
         }
 
-        // Renderizza i suoni con stato taken
         function renderSounds() {
             if (allSounds.length === 0) {
                 soundGrid.innerHTML = '<div class="loading-text">Nessun suono disponibile</div>';
@@ -772,7 +645,6 @@
                 `;
             }).join('');
             
-            // Se il suono selezionato è stato preso, deseleziona
             if (selectedSound && usedSounds.has(selectedSound)) {
                 selectedSound = null;
                 const firstAvailable = allSounds.find(s => !usedSounds.has(s));
@@ -782,7 +654,6 @@
                 }
             }
             
-            // Se nessuno selezionato, seleziona il primo disponibile
             if (!selectedSound) {
                 const firstAvailable = allSounds.find(s => !usedSounds.has(s));
                 if (firstAvailable) {
@@ -832,7 +703,7 @@
             if (!selectedSound) return alert("Seleziona un suono!");
             
             if (usedGifs.has(selectedGif)) {
-                showToast('Questa GIF è appena stata presa! Scegline un\'altra.');
+                showToast("Questa GIF è appena stata presa! Scegline un'altra.");
                 renderGifs();
                 return;
             }
@@ -847,20 +718,16 @@
             socket.emit('register_team', myTeam);
         }
 
-        // Entra nella schermata di gioco
         function enterGameScreen() {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
             
-            // Aggiorna header con info squadra
             document.getElementById('my-team-gif').src = '/GIF/' + myTeam.gif;
             document.getElementById('my-team-name').textContent = myTeam.name;
             document.getElementById('my-team-score').textContent = myTeam.score || 0;
         }
 
-        // Gestione risposta registrazione dal server
         socket.on('registration_success', (data) => {
-            // NUOVO: Salva il token (gestisce anche il caso legacy senza token)
             const token = data && data.sessionToken ? data.sessionToken : null;
             if (token) {
                 saveToken(token, myTeam.name);
@@ -877,7 +744,6 @@
             loadSounds();
         });
 
-        // NUOVO: Gestione riconnessione riuscita
         socket.on('rejoin_success', (data) => {
             saveToken(data.sessionToken, data.name);
             myTeam = {
@@ -891,30 +757,25 @@
             enterGameScreen();
         });
 
-        // NUOVO: Errore riconnessione
         socket.on('rejoin_error', (data) => {
             showToast(data.message, 'error', 4000);
         });
 
-        // NUOVO: Stato sessione (squadre disconnesse)
         socket.on('session_status', (data) => {
             disconnectedTeams = data.disconnectedTeams || [];
             renderDisconnectedTeams();
             
-            // Se c'è una sessione attiva e abbiamo un token salvato, prova a riconnettersi automaticamente
             if (data.active && !myTeam) {
                 const saved = loadSavedToken();
                 if (saved.teamName) {
                     const myDisconnectedTeam = disconnectedTeams.find(t => t.name === saved.teamName);
                     if (myDisconnectedTeam) {
-                        // Riconnessione automatica
                         setTimeout(() => rejoinTeam(saved.teamName), 500);
                     }
                 }
             }
         });
 
-        // Aggiornamento risorse usate
         socket.on('used_resources', (data) => {
             usedGifs = new Set(data.gifs);
             usedSounds = new Set(data.sounds);
@@ -925,7 +786,6 @@
             }
         });
 
-        // Aggiornamento squadre (per punteggio)
         socket.on('update_teams', (teams) => {
             if (myTeam) {
                 const me = teams.find(t => t.name === myTeam.name);
@@ -936,7 +796,6 @@
             }
         });
 
-        // Click sul pulsantone
         buzzer.addEventListener('touchstart', handleBuzz);
         buzzer.addEventListener('click', handleBuzz);
 
@@ -947,7 +806,6 @@
             }
         }
 
-        // Gestione stato pulsante dal server
         socket.on('buzzer_status', (status) => {
             if (status === 'active') {
                 buzzer.classList.add('active');
@@ -960,7 +818,6 @@
             }
         });
 
-        // Qualcuno ha prenotato
         socket.on('team_buzzed', (team) => {
             const overlay = document.getElementById('overlay-msg');
             const msg = document.getElementById('msg-text');
@@ -979,12 +836,10 @@
             }
         });
 
-        // Reset per nuovo round
         socket.on('reset_round', () => {
             document.getElementById('overlay-msg').style.display = 'none';
         });
 
-        // Reset completo del gioco
         socket.on('game_reset', () => {
             document.getElementById('game-screen').style.display = 'none';
             document.getElementById('login-screen').style.display = 'block';
@@ -995,7 +850,6 @@
             isRegistering = false;
             disconnectedTeams = [];
             
-            // NUOVO: Cancella token salvato
             clearToken();
             
             renderDisconnectedTeams();
@@ -1004,7 +858,6 @@
             loadSounds();
         });
 
-        // Carica tutto all'avvio
         loadHints();
         loadGifs();
         loadSounds();
