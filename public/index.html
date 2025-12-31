@@ -827,7 +827,7 @@
             <div class="action-row">
                 <button class="action-btn one-correct" onclick="handleSystem2Answer('one')">
                     ✓✗ Solo Titolo o Autore
-                    <span class="points">0</span>
+                    <span class="points">+1</span>
                 </button>
             </div>
             <div class="action-row">
@@ -1074,7 +1074,7 @@
                         }, index === 0 ? 0 : 30); // Primo numero immediato
                         
                         index++;
-                        setTimeout(showNumber, 500); // 500ms tra ogni numero
+                        setTimeout(showNumber, 1000); // 1000ms tra ogni numero
                     } else {
                         // Fine countdown - parte la canzone
                         el.countdownOverlay.classList.remove('active');
@@ -1233,7 +1233,7 @@
                     shouldReveal = true;
                     break;
                 case 'one':
-                    delta = 0;
+                    delta = 1;
                     shouldReveal = true; // Rivelato perché ha indovinato qualcosa
                     break;
                 case 'none':
