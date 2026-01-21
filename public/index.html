@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎵 SARABANDA - Console Giudice</title>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -438,6 +438,28 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+        .revealed-title-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            color: #000;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .revealed-title-close-btn:hover {
+            background: rgba(0, 0, 0, 0.5);
+            transform: rotate(90deg);
+        }
 
         /* MODAL PRENOTAZIONE */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -630,6 +652,153 @@
             margin-bottom: 20px;
         }
 
+        /* TIMER RISPOSTA */
+        .answer-timer-overlay {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--accent-orange), #ff4444);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            box-shadow: 0 5px 30px rgba(255, 107, 53, 0.6);
+            animation: timerPulse 1s infinite;
+        }
+        .answer-timer-overlay.active {
+            display: flex;
+        }
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .answer-timer-number {
+            font-family: 'Bangers', cursive;
+            font-size: 4rem;
+            color: white;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        .answer-timer-overlay.warning {
+            background: linear-gradient(135deg, #ff4444, #aa0000);
+            animation: timerWarning 0.5s infinite;
+        }
+        @keyframes timerWarning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* LOG CANZONI */
+        .song-log-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .song-log-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.3s;
+        }
+        .song-log-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .song-log-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-cyan);
+        }
+        .song-log-toggle {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        .song-log-toggle.open {
+            transform: rotate(180deg);
+        }
+        .song-log-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .song-log-content.open {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .song-log-content::-webkit-scrollbar { width: 8px; }
+        .song-log-content::-webkit-scrollbar-track { background: var(--bg-card); }
+        .song-log-content::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+        .song-log-list {
+            padding: 10px;
+        }
+        .song-log-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .song-log-item.played {
+            opacity: 0.4;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .song-log-item:not(.played):hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-gold);
+        }
+        .song-log-name {
+            flex: 1;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        .song-log-item.played .song-log-name {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+        .song-log-play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--accent-green), #00aa00);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        .song-log-play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 15px rgba(57, 255, 20, 0.4);
+        }
+        .song-log-item.played .song-log-play-btn {
+            background: linear-gradient(135deg, #555, #333);
+            opacity: 0.5;
+        }
+        .song-log-item.played .song-log-play-btn:hover {
+            opacity: 0.7;
+        }
+        .song-log-stats {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -645,7 +814,7 @@
             
             <div class="scoring-section">
                 <h3>🏆 Sistema di Punteggio</h3>
-                
+
                 <div class="scoring-option selected" data-system="1" onclick="selectScoringSystem(1)">
                     <div class="scoring-option-header">
                         <div class="scoring-radio"></div>
@@ -659,7 +828,7 @@
                         <span class="scoring-badge negative">✗ Sbagliato: -1</span>
                     </div>
                 </div>
-                
+
                 <div class="scoring-option" data-system="2" onclick="selectScoringSystem(2)">
                     <div class="scoring-option-header">
                         <div class="scoring-radio"></div>
@@ -670,8 +839,21 @@
                     </div>
                     <div class="scoring-details">
                         <span class="scoring-badge positive">✓✓ Entrambi giusti: +2</span>
-                        <span class="scoring-badge neutral">✓✗ Solo uno giusto: 0</span>
+                        <span class="scoring-badge neutral">✓✗ Solo uno giusto: +1</span>
                         <span class="scoring-badge negative">✗✗ Entrambi sbagliati: -2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scoring-section">
+                <h3>⏱️ Timer Risposta</h3>
+                <div class="scoring-option" id="timer-toggle" onclick="toggleAnswerTimer()">
+                    <div class="scoring-option-header">
+                        <div class="scoring-radio"></div>
+                        <div class="scoring-option-title">Timer di 10 secondi</div>
+                    </div>
+                    <div class="scoring-option-desc">
+                        Quando una squadra prenota, parte un timer di 10 secondi con gong finale
                     </div>
                 </div>
             </div>
@@ -691,6 +873,7 @@
     
     <!-- Banner titolo rivelato (sempre in cima, sopra tutto) -->
     <div class="revealed-title-banner" id="revealed-banner">
+        <button class="revealed-title-close-btn" onclick="hideRevealedTitle()" title="Chiudi">✕</button>
         <div class="label">🎵 Canzone</div>
         <div id="revealed-title-text">???</div>
     </div>
@@ -698,7 +881,6 @@
     <div class="container">
         <header class="header">
             <h1 class="logo">SARABANDA</h1>
-            <p class="subtitle">🎤 Server Console 🎤</p>
             <button class="settings-btn" onclick="openSettings()" title="Impostazioni">⚙️</button>
         </header>
 
@@ -747,15 +929,33 @@
                     <span class="label">Sistema:</span>
                     <span class="value" id="game-system-label">Classico (+1/-1)</span>
                 </div>
-                <button class="settings-btn" onclick="openSettings()" title="Impostazioni" style="position: static;">⚙️</button>
             </div>
-            
+
             <!-- Info sessione attiva -->
             <div class="session-info" id="session-info">
                 <div class="session-text">
                     <strong>Sessione attiva</strong> - Le squadre possono riconnettersi
                 </div>
                 <div class="session-badge" id="session-id">ID: ---</div>
+            </div>
+
+            <!-- Log Canzoni -->
+            <div class="song-log-container">
+                <div class="song-log-header" onclick="toggleSongLog()">
+                    <div class="song-log-title">
+                        <span>📋</span>
+                        <span>Log Canzoni</span>
+                        <span class="song-log-stats" id="song-log-stats">0/0 suonate</span>
+                    </div>
+                    <div class="song-log-toggle" id="song-log-toggle">▼</div>
+                </div>
+                <div class="song-log-content" id="song-log-content">
+                    <div class="song-log-list" id="song-log-list">
+                        <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+                            Nessuna canzone caricata
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <!-- Warning squadre disconnesse -->
@@ -841,10 +1041,15 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- Timer Risposta -->
+    <div class="answer-timer-overlay" id="answer-timer">
+        <div class="answer-timer-number" id="answer-timer-number">10</div>
+    </div>
+
     <script>
         const socket = io();
-        
-        // STATO DEL GIOCO
+
+        // STATO DEL GIOCO (dichiarato prima per essere accessibile dalle funzioni)
         const state = {
             songs: [], playedSongs: [], currentSong: null,
             teams: [], isPlaying: false, bookedTeamId: null,
@@ -857,8 +1062,143 @@
             pausedAt: 0,           // Punto in cui la canzone è stata fermata
             playbackStartedAt: 0,  // Timestamp di quando è iniziata la riproduzione
             songRevealed: false,   // Flag per tracciare se la canzone è già stata rivelata
-            scoringSystem: 1       // 1 = classico, 2 = titolo+autore
+            scoringSystem: 1,      // 1 = classico, 2 = titolo+autore
+            answerTimerEnabled: false, // Timer di risposta attivo?
+            answerTimerInterval: null, // Intervallo del timer
+            answerTimerRemaining: 10   // Secondi rimanenti
         };
+
+        // --- FUNZIONI PER IMPOSTAZIONI (dichiarate prima per onclick) ---
+        function openSettings() {
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.remove('active');
+        }
+
+        function selectScoringSystem(system) {
+            state.scoringSystem = system;
+
+            // Aggiorna UI opzioni
+            document.querySelectorAll('.scoring-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (parseInt(opt.dataset.system) === system) {
+                    opt.classList.add('selected');
+                }
+            });
+
+            // Aggiorna label
+            const label = system === 1 ? 'Classico (+1/-1)' : 'Titolo+Autore (+2/+1/-2)';
+            const currentSystemLabel = document.getElementById('current-system-label');
+            const gameSystemLabel = document.getElementById('game-system-label');
+            if (currentSystemLabel) currentSystemLabel.textContent = label;
+            if (gameSystemLabel) gameSystemLabel.textContent = label;
+
+            // Aggiorna visibilità azioni nel modal prenotazione
+            updateBookingActionsVisibility();
+        }
+
+        function updateBookingActionsVisibility() {
+            const bookingActionsSystem1 = document.getElementById('booking-actions-system1');
+            const bookingActionsSystem2 = document.getElementById('booking-actions-system2');
+            if (state.scoringSystem === 1) {
+                if (bookingActionsSystem1) bookingActionsSystem1.style.display = 'flex';
+                if (bookingActionsSystem2) bookingActionsSystem2.style.display = 'none';
+            } else {
+                if (bookingActionsSystem1) bookingActionsSystem1.style.display = 'none';
+                if (bookingActionsSystem2) bookingActionsSystem2.style.display = 'block';
+            }
+        }
+
+        function toggleAnswerTimer() {
+            state.answerTimerEnabled = !state.answerTimerEnabled;
+            const timerToggle = document.getElementById('timer-toggle');
+            if (state.answerTimerEnabled) {
+                timerToggle.classList.add('selected');
+            } else {
+                timerToggle.classList.remove('selected');
+            }
+        }
+
+        function startAnswerTimer() {
+            if (!state.answerTimerEnabled) return;
+
+            const timerOverlay = document.getElementById('answer-timer');
+            const timerNumber = document.getElementById('answer-timer-number');
+
+            state.answerTimerRemaining = 10;
+            timerNumber.textContent = state.answerTimerRemaining;
+            timerOverlay.classList.remove('warning');
+            timerOverlay.classList.add('active');
+
+            state.answerTimerInterval = setInterval(() => {
+                state.answerTimerRemaining--;
+                timerNumber.textContent = state.answerTimerRemaining;
+
+                // Ultimi 3 secondi: warning
+                if (state.answerTimerRemaining <= 3 && state.answerTimerRemaining > 0) {
+                    timerOverlay.classList.add('warning');
+                }
+
+                if (state.answerTimerRemaining <= 0) {
+                    clearInterval(state.answerTimerInterval);
+                    timerOverlay.classList.remove('active');
+                    timerOverlay.classList.remove('warning');
+
+                    // Suono del gong
+                    playGongSound();
+                }
+            }, 1000);
+        }
+
+        function stopAnswerTimer() {
+            if (state.answerTimerInterval) {
+                clearInterval(state.answerTimerInterval);
+                state.answerTimerInterval = null;
+            }
+            const timerOverlay = document.getElementById('answer-timer');
+            timerOverlay.classList.remove('active');
+            timerOverlay.classList.remove('warning');
+        }
+
+        function playGongSound() {
+            if (!state.audioCtx) {
+                console.log('AudioContext non inizializzato, impossibile riprodurre il gong');
+                return;
+            }
+
+            try {
+                // Genera un suono di gong usando Web Audio API
+                const now = state.audioCtx.currentTime;
+
+                // Oscillatore principale (gong grave)
+                const osc1 = state.audioCtx.createOscillator();
+                const gain1 = state.audioCtx.createGain();
+                osc1.connect(gain1);
+                gain1.connect(state.audioCtx.destination);
+                osc1.frequency.setValueAtTime(100, now);
+                osc1.frequency.exponentialRampToValueAtTime(50, now + 2);
+                gain1.gain.setValueAtTime(0.8, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 2);
+                osc1.start(now);
+                osc1.stop(now + 2);
+
+                // Oscillatore secondario (armonico)
+                const osc2 = state.audioCtx.createOscillator();
+                const gain2 = state.audioCtx.createGain();
+                osc2.connect(gain2);
+                gain2.connect(state.audioCtx.destination);
+                osc2.frequency.setValueAtTime(150, now);
+                osc2.frequency.exponentialRampToValueAtTime(75, now + 1.5);
+                gain2.gain.setValueAtTime(0.4, now);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+                osc2.start(now);
+                osc2.stop(now + 1.5);
+            } catch (e) {
+                console.error('Errore riproduzione gong:', e);
+            }
+        }
 
         // ELEMENTI DOM
         const el = {
@@ -899,44 +1239,6 @@
         };
 
         // --- GESTIONE IMPOSTAZIONI ---
-        
-        function openSettings() {
-            el.settingsModal.classList.add('active');
-        }
-        
-        function closeSettings() {
-            el.settingsModal.classList.remove('active');
-        }
-        
-        function selectScoringSystem(system) {
-            state.scoringSystem = system;
-            
-            // Aggiorna UI opzioni
-            document.querySelectorAll('.scoring-option').forEach(opt => {
-                opt.classList.remove('selected');
-                if (parseInt(opt.dataset.system) === system) {
-                    opt.classList.add('selected');
-                }
-            });
-            
-            // Aggiorna label
-            const label = system === 1 ? 'Classico (+1/-1)' : 'Titolo+Autore (+2/0/-2)';
-            el.currentSystemLabel.textContent = label;
-            el.gameSystemLabel.textContent = label;
-            
-            // Aggiorna visibilità azioni nel modal prenotazione
-            updateBookingActionsVisibility();
-        }
-        
-        function updateBookingActionsVisibility() {
-            if (state.scoringSystem === 1) {
-                el.bookingActionsSystem1.style.display = 'flex';
-                el.bookingActionsSystem2.style.display = 'none';
-            } else {
-                el.bookingActionsSystem1.style.display = 'none';
-                el.bookingActionsSystem2.style.display = 'block';
-            }
-        }
 
         // --- GESTIONE SOCKET.IO ---
 
@@ -960,23 +1262,29 @@
         // 2. Qualcuno ha prenotato!
         socket.on('team_buzzed', (team) => {
             if (state.bookedTeamId) return; // Già prenotato
-            
+
             stopSong(false); // Ferma audio ma non resettare il round
             state.bookedTeamId = team.id;
 
             // Riproduci il suono della squadra
             if (team.sound) {
                 const buzzSound = new Audio('/Sounds/' + team.sound);
-                buzzSound.play().catch(e => console.log('Audio play error:', e));
+                buzzSound.play().catch(e => {
+                    console.log('Errore riproduzione suono squadra:', e);
+                    console.log('File cercato:', '/Sounds/' + team.sound);
+                });
             }
+
+            // Avvia il timer se abilitato
+            startAnswerTimer();
 
             // Mostra Popup
             el.bookingTeamName.textContent = team.name;
             el.bookingGif.src = '/GIF/' + team.gif;
-            
+
             // Aggiorna visibilità azioni in base al sistema
             updateBookingActionsVisibility();
-            
+
             el.overlay.classList.add('active');
             el.bookingAlert.classList.add('active');
         });
@@ -1092,22 +1400,24 @@
         async function playNewSong() {
             if (state.songs.length === 0) return showToast("Nessuna canzone!");
             if (state.isCountingDown) return; // Evita doppi click durante countdown
-            
+
             stopSong(); // Resetta stato precedente
             hideRevealedTitle(); // Nascondi banner titolo precedente
             state.songRevealed = false; // Reset flag rivelazione
-            
+
             // Scegli canzone random non ancora suonata
             const available = state.songs.filter(s => !state.playedSongs.includes(s));
             if (available.length === 0) {
                 state.playedSongs = []; // Reset se finite
+                renderSongLog(); // Aggiorna log
                 showToast("Canzoni finite! Si ricomincia.");
                 return playNewSong();
             }
-            
+
             const song = available[Math.floor(Math.random() * available.length)];
             state.currentSong = song;
             state.playedSongs.push(song);
+            renderSongLog(); // Aggiorna log
 
             // Imposta il titolo nel banner
             el.revealedTitleText.textContent = song.name;
@@ -1261,7 +1571,10 @@
             el.overlay.classList.remove('active');
             el.bookingAlert.classList.remove('active');
             state.bookedTeamId = null;
-            
+
+            // Ferma il timer se attivo
+            stopAnswerTimer();
+
             // Resetta i telefoni (spegne overlay "hai prenotato")
             socket.emit('judge_action', { type: 'reset_round' });
         }
@@ -1298,6 +1611,7 @@
             el.songCount.style.display = 'inline-block';
             el.songCount.textContent = `${state.songs.length} canzoni`;
             checkStartConditions();
+            renderSongLog();
         }
 
         function checkStartConditions() {
@@ -1369,6 +1683,81 @@
             el.toast.textContent = msg;
             el.toast.classList.add('active');
             setTimeout(() => el.toast.classList.remove('active'), 2000);
+        }
+
+        // --- LOG CANZONI ---
+        function toggleSongLog() {
+            const content = document.getElementById('song-log-content');
+            const toggle = document.getElementById('song-log-toggle');
+            content.classList.toggle('open');
+            toggle.classList.toggle('open');
+        }
+
+        function renderSongLog() {
+            const songLogList = document.getElementById('song-log-list');
+            const songLogStats = document.getElementById('song-log-stats');
+
+            if (state.songs.length === 0) {
+                songLogList.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-muted);">Nessuna canzone caricata</div>';
+                songLogStats.textContent = '0/0 suonate';
+                return;
+            }
+
+            songLogStats.textContent = `${state.playedSongs.length}/${state.songs.length} suonate`;
+
+            songLogList.innerHTML = state.songs.map((song, index) => {
+                const isPlayed = state.playedSongs.includes(song);
+                return `
+                    <div class="song-log-item ${isPlayed ? 'played' : ''}">
+                        <div class="song-log-name">${song.name}</div>
+                        <button class="song-log-play-btn" onclick="playSpecificSong(${index})" title="Riproduci questa canzone">
+                            ▶
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function playSpecificSong(songIndex) {
+            if (state.isCountingDown) return;
+
+            const song = state.songs[songIndex];
+            if (!song) return;
+
+            stopSong();
+            hideRevealedTitle();
+            state.songRevealed = false;
+
+            state.currentSong = song;
+
+            // Aggiungi alle canzoni suonate se non c'è già
+            if (!state.playedSongs.includes(song)) {
+                state.playedSongs.push(song);
+            }
+
+            // Aggiorna il log
+            renderSongLog();
+
+            // Imposta il titolo nel banner
+            el.revealedTitleText.textContent = song.name;
+
+            try {
+                const buffer = await song.file.arrayBuffer();
+                const audioBuffer = await state.audioCtx.decodeAudioData(buffer);
+
+                state.currentAudioBuffer = audioBuffer;
+
+                // Punto di partenza random
+                const startPercent = 0.1 + Math.random() * 0.6;
+                state.currentStartTime = audioBuffer.duration * startPercent;
+
+                await showCountdown();
+                startPlayback(state.currentStartTime);
+
+            } catch (e) {
+                console.error(e);
+                alert("Errore riproduzione file");
+            }
         }
 
         // --- EVENT LISTENERS ---

@@ -5,17 +5,29 @@ const path = require('path');
 const ip = require('ip');
 const fs = require('fs');
 const crypto = require('crypto');
+const qrcode = require('qrcode-terminal');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+// Middleware per logging delle richieste
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url} from ${req.ip}`);
+    next();
+});
 
 // Serve i file statici (HTML, CSS, JS) dalla cartella 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(process.cwd(), 'public')));
 // Serve le GIF dalla cartella GIF
-app.use('/GIF', express.static('GIF'));
+app.use('/GIF', express.static(path.join(process.cwd(), 'GIF')));
 // Serve i suoni dalla cartella Sounds
-app.use('/Sounds', express.static('Sounds'));
+app.use('/Sounds', express.static(path.join(process.cwd(), 'Sounds')));
 
 // Traccia GIF e suoni già selezionati
 let usedGifs = new Set();
@@ -40,7 +52,7 @@ function generateSessionId() {
 
 // API per ottenere la lista delle GIF disponibili
 app.get('/api/gifs', (req, res) => {
-    const gifDir = path.join(__dirname, 'GIF');
+    const gifDir = path.join(process.cwd(), 'GIF');
     fs.readdir(gifDir, (err, files) => {
         if (err) {
             return res.json([]);
@@ -52,7 +64,7 @@ app.get('/api/gifs', (req, res) => {
 
 // API per ottenere la lista dei suoni disponibili
 app.get('/api/sounds', (req, res) => {
-    const soundDir = path.join(__dirname, 'Sounds');
+    const soundDir = path.join(process.cwd(), 'Sounds');
     fs.readdir(soundDir, (err, files) => {
         if (err) {
             return res.json([]);
@@ -64,10 +76,10 @@ app.get('/api/sounds', (req, res) => {
 
 // API per ottenere suggerimenti casuali per nomi squadre e membri
 app.get('/api/hints', (req, res) => {
-    const hintsDir = path.join(__dirname, 'Hint');
+    const hintsDir = path.join(process.cwd(), 'Hint');
     let teamHints = [];
     let memberHints = [];
-    
+
     try {
         const teamFile = path.join(hintsDir, 'nomi_squadre.txt');
         if (fs.existsSync(teamFile)) {
@@ -77,7 +89,7 @@ app.get('/api/hints', (req, res) => {
     } catch (e) {
         console.log('Nessun file nomi_squadre.txt trovato');
     }
-    
+
     try {
         const memberFile = path.join(hintsDir, 'nomi_membri.txt');
         if (fs.existsSync(memberFile)) {
@@ -305,6 +317,7 @@ io.on('connection', (socket) => {
             case 'reset_round':
                 buzzerLocked = true;
                 io.emit('reset_round');
+                io.emit('buzzer_status', 'locked');
                 break;
                 
             case 'reset_game':
@@ -374,8 +387,15 @@ function broadcastDisconnectedTeams() {
 // Avvio Server
 const PORT = 3000;
 server.listen(PORT, () => {
+    const ipAddress = ip.address();
+    const url = `http://${ipAddress}:${PORT}/mobile.html`;
+
     console.log(`\n--- SARABANDA SERVER PRONTO ---`);
-    console.log(`Indirizzo IP locale: http://${ip.address()}:${PORT}`);
-    console.log(`1. Il Giudice apre questo link sul PC.`);
-    console.log(`2. Le squadre aprono http://${ip.address()}:${PORT}/mobile.html sui telefoni.\n`);
+    console.log(`Il Giudice deve aprire: http://localhost:${PORT}`);
+    console.log(`\nFai scansionare questo QR Code agli amici per giocare:`);
+
+    // Genera il QR Code piccolo nel terminale
+    qrcode.generate(url, {small: true});
+
+    console.log(`(Oppure digita: ${url})\n`);
 });
